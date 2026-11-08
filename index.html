@@ -2,1651 +2,1161 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CraftResume Studio | Free ATS-Friendly Resume Builder</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts for ATS & Design Selection -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProResume Studio - ATS & Dynamic Builder</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            inter: ['Inter', 'sans-serif'],
-            roboto: ['Roboto', 'sans-serif'],
-            merriweather: ['Merriweather', 'serif'],
-            poppins: ['Poppins', 'sans-serif'],
-            outfit: ['Outfit', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'monospace']
-          }
-        }
-      }
-    }
-  </script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   <style>
-    /* Fixed standard A4 dimensions */
-    .a4-sheet {
-      width: 210mm;
-      min-height: 297mm;
-      background-color: #ffffff;
-      color: #1f2937;
-      box-sizing: border-box;
-      position: relative;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12), 0 0 1px 1px rgba(0,0,0,0.05);
-      transform-origin: top center;
+    :root {
+      --bg: #090a0f;
+      --surface: #12141c;
+      --surface-border: #222634;
+      --text-main: #f1f3f9;
+      --text-muted: #8b92a5;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --paper-bg: #ffffff;
+      --paper-text: #111827;
+      --paper-muted: #4b5563;
+      --paper-border: #e5e7eb;
+      --paper-line: #0f172a;
     }
 
-    /* Outer wrapper that scales down the A4 sheet on small screens */
-    #sheet-viewport {
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Geist', sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* APP LAYOUT */
+    #app-container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* LEFT CONTROLS PANEL */
+    #sidebar {
+      width: 480px;
+      min-width: 440px;
+      background: var(--surface);
+      border-right: 1px solid var(--surface-border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      z-index: 10;
+    }
+
+    .sidebar-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--surface-border);
+      background: #0d0f17;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background: rgba(59, 130, 246, 0.04);
+    }
+
+    .tab-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* FORM STYLES */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"], input[type="email"], textarea, select {
       width: 100%;
+      background: #0a0c13;
+      border: 1px solid var(--surface-border);
+      color: var(--text-main);
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      transition: border 0.15s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+      line-height: 1.4;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .card-item {
+      background: #181b26;
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .card-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .card-item-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    .btn-icon-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle-visibility {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .btn-danger-tiny {
+      background: none;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .btn-danger-tiny:hover {
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    .btn-add {
+      width: 100%;
+      padding: 10px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px dashed var(--accent);
+      color: var(--accent);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-top: 6px;
+    }
+
+    .btn-add:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* RIGHT PREVIEW WORKSPACE */
+    #preview-workspace {
+      flex: 1;
+      background: #090a0f;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .top-action-bar {
+      height: 58px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .bar-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: #1c202d;
+      color: var(--text-main);
+      border: 1px solid var(--surface-border);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-secondary:hover {
+      background: #252b3d;
+    }
+
+    .canvas-scroller {
+      flex: 1;
+      overflow: auto;
+      padding: 40px;
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      overflow-x: hidden;
-      transition: height 0.15s ease-out;
+      background: #08090d;
     }
 
-    /* Print Viewport Optimizations */
-    @page {
-      size: A4 portrait;
-      margin: 0;
+    /* A4 RESUME SHEET */
+    .resume-sheet {
+      width: 210mm;
+      min-height: 297mm;
+      background: var(--paper-bg);
+      color: var(--paper-text);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+      padding: 24mm 22mm;
+      font-family: 'Newsreader', serif;
+      position: relative;
+      transition: all 0.2s ease;
+      transform-origin: top center;
     }
 
+    /* Density Variants */
+    .resume-sheet.density-compact {
+      padding: 18mm 16mm;
+      font-size: 0.93rem;
+      line-height: 1.28;
+    }
+    .resume-sheet.density-normal {
+      padding: 22mm 20mm;
+      font-size: 1rem;
+      line-height: 1.38;
+    }
+    .resume-sheet.density-relaxed {
+      padding: 26mm 24mm;
+      font-size: 1.05rem;
+      line-height: 1.46;
+    }
+
+    /* Font switch */
+    .resume-sheet.font-sans {
+      font-family: 'Geist', sans-serif;
+    }
+    .resume-sheet.font-serif {
+      font-family: 'Newsreader', serif;
+    }
+
+    /* RESUME CONTENT TYPOGRAPHY */
+    .resume-header {
+      text-align: center;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--paper-line);
+      padding-bottom: 12px;
+    }
+
+    .resume-name {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #000;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .resume-title {
+      font-family: 'Geist', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #4b5563;
+      margin-bottom: 8px;
+    }
+
+    .resume-contact {
+      font-family: 'Geist', sans-serif;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: #374151;
+    }
+
+    .resume-contact span {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .resume-section {
+      margin-bottom: 15px;
+    }
+
+    .resume-section-title {
+      font-family: 'Geist', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid #cbd5e1;
+      padding-bottom: 3px;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .resume-entry {
+      margin-bottom: 10px;
+    }
+
+    .resume-entry:last-child {
+      margin-bottom: 0;
+    }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: 'Geist', sans-serif;
+      font-size: 0.88rem;
+    }
+
+    .entry-role {
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .entry-company {
+      font-weight: 500;
+      color: #4b5563;
+    }
+
+    .entry-date {
+      font-size: 0.78rem;
+      color: #6b7280;
+      white-space: nowrap;
+    }
+
+    .entry-summary {
+      font-size: 0.92rem;
+      margin-top: 3px;
+      color: #374151;
+    }
+
+    .entry-bullets {
+      margin-top: 4px;
+      padding-left: 18px;
+      color: #374151;
+      font-size: 0.92rem;
+    }
+
+    .entry-bullets li {
+      margin-bottom: 3px;
+    }
+
+    /* ATS BADGES & SKILLS PANEL */
+    .ats-score-card {
+      background: #171b26;
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .score-circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #252b3d;
+      border: 3px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .keyword-tag-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .kw-tag {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-family: 'Geist', sans-serif;
+    }
+
+    .kw-tag.matched {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #34d399;
+    }
+
+    .kw-tag.missing {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid #ef4444;
+      color: #f87171;
+    }
+
+    /* QUICK APPLY DRAWER */
+    .quick-copy-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #181b26;
+      border: 1px solid var(--surface-border);
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .quick-copy-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .quick-copy-val {
+      font-size: 0.85rem;
+      font-family: monospace;
+      color: #e2e8f0;
+      max-width: 250px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-copy-chip {
+      background: var(--surface-border);
+      border: none;
+      color: var(--text-main);
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+    .btn-copy-chip:hover {
+      background: var(--accent);
+    }
+
+    /* PRINT RULES */
     @media print {
       body {
-        background: #ffffff !important;
-        color: #000000 !important;
-        padding: 0 !important;
-        margin: 0 !important;
+        background: #fff;
+        color: #000;
+        height: auto;
+        overflow: visible;
       }
-      .no-print, header, aside, #toast, .action-bar, #mobile-preview-bar, #preview-controls, #action-banner {
+      #sidebar, .top-action-bar {
         display: none !important;
       }
-      main {
-        padding: 0 !important;
-        margin: 0 !important;
-        display: block !important;
-        max-width: none !important;
+      #preview-workspace {
+        height: auto;
+        background: transparent;
       }
-      #preview-pane {
-        display: block !important;
+      .canvas-scroller {
+        padding: 0;
+        overflow: visible;
+        background: transparent;
+      }
+      .resume-sheet {
+        box-shadow: none;
         width: 100% !important;
+        min-height: auto;
+        margin: 0;
         padding: 0 !important;
-        margin: 0 !important;
-        background: transparent !important;
       }
-      #sheet-viewport {
-        height: auto !important;
-        overflow: visible !important;
-        display: block !important;
+      .resume-section {
+        page-break-inside: avoid;
       }
-      .a4-sheet {
-        box-shadow: none !important;
-        margin: 0 !important;
-        width: 100% !important;
-        min-height: auto !important;
-        border: none !important;
-        border-radius: 0 !important;
-        transform: none !important;
-        page-break-after: avoid;
-      }
-    }
-
-    /* Custom Scrollbars */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
     }
   </style>
 </head>
+<body>
 
-<body class="bg-slate-100 text-slate-800 font-inter min-h-screen flex flex-col selection:bg-indigo-100 selection:text-indigo-900">
+<div id="app-container">
+  <!-- SIDEBAR ENGINE -->
+  <aside id="sidebar">
+    <div class="sidebar-tabs">
+      <button class="tab-btn active" onclick="switchTab('content-tab')">Content</button>
+      <button class="tab-btn" onclick="switchTab('ats-tab')">ATS Matcher</button>
+      <button class="tab-btn" onclick="switchTab('custom-tab')">Custom Sections</button>
+      <button class="tab-btn" onclick="switchTab('apply-tab')">Quick Apply</button>
+    </div>
 
-  <!-- TOP NAVIGATION HEADER -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-3 sm:px-6 py-2.5 flex items-center justify-between no-print">
-    <!-- Brand / Logo -->
-    <div class="flex items-center space-x-2.5 min-w-0">
-      <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
-        <i data-lucide="file-text" class="w-4 h-4"></i>
+    <!-- TAB 1: CORE CONTENT & ROLE VARIANTS -->
+    <div id="content-tab" class="tab-content active">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="inp-name" value="Alex Rivera" oninput="renderResume()">
       </div>
-      <div class="min-w-0">
-        <div class="flex items-center space-x-1.5">
-          <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-none truncate">CraftResume</h1>
-          <span class="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">Studio</span>
+      <div class="form-group">
+        <label>Target Headline / Title</label>
+        <input type="text" id="inp-title" value="Lead Data Analyst & Systems Auditor" oninput="renderResume()">
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="inp-email" value="alex.rivera@example.com" oninput="renderResume()">
         </div>
-        <p class="text-[10px] text-slate-400 hidden sm:block truncate">ATS-compliant, instant export</p>
+        <div class="form-group">
+          <label>Phone / Location</label>
+          <input type="text" id="inp-location" value="+91 98765 43210 • Vadodara, IN" oninput="renderResume()">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Profile Links (LinkedIn, GitHub, Portfolio)</label>
+        <input type="text" id="inp-links" value="linkedin.com/in/alexrivera • github.com/alexrivera" oninput="renderResume()">
+      </div>
+      <div class="form-group">
+        <label>Professional Summary</label>
+        <textarea id="inp-summary" oninput="renderResume()">Detail-focused Quality Control Analyst with 5+ years of experience auditing large-scale dataset pipelines, receipt recognition hierarchies, and web extractions. Expert in SQL, Python automation, and executive dashboards with verified track record in optimizing data reliability to 99.8%.</textarea>
+      </div>
+
+      <!-- Experience Section -->
+      <div class="form-group">
+        <label>Experience Items (Toggle for Role Variants)</label>
+        <div id="experience-list"></div>
+        <button class="btn-add" onclick="addExperienceItem()">+ Add Experience Position</button>
+      </div>
+
+      <!-- Skills Section -->
+      <div class="form-group">
+        <label>Technical Skills (Comma Separated)</label>
+        <textarea id="inp-skills" oninput="renderResume(); runATSAnalysis();">SQL, Python, Microsoft Excel, Power BI, Jira, Data Quality Assurance, Production Validation, Pipeline Auditing, ETL, Tableau, AWS, Git</textarea>
       </div>
     </div>
 
-    <!-- Quick Utilities -->
-    <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
-      <button onclick="loadSampleData()" title="Load Sample Data" class="px-2 sm:px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center space-x-1 shrink-0">
-        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500 shrink-0"></i>
-        <span class="hidden sm:inline">Sample Data</span>
-      </button>
+    <!-- TAB 2: ATS TARGET & KEYWORD CHECKER -->
+    <div id="ats-tab" class="tab-content">
+      <div class="ats-score-card">
+        <div>
+          <div style="font-weight: 700; font-size: 0.95rem;">ATS Match Strength</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Real-time target comparison</div>
+        </div>
+        <div class="score-circle" id="ats-score-badge">78%</div>
+      </div>
 
-      <button onclick="clearAllData()" title="Reset All Fields" class="px-2 sm:px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors flex items-center space-x-1 shrink-0">
-        <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
-        <span class="hidden sm:inline">Reset</span>
-      </button>
+      <div class="form-group">
+        <label>Paste Target Job Description (JD)</label>
+        <textarea id="inp-jd" style="height: 140px;" placeholder="Paste the job description here..." oninput="runATSAnalysis()">We are seeking a QC Data Analyst skilled in SQL, Python, Excel, and Jira. Candidates will oversee data pipeline audits, production validation, ETL reconciliation, and Power BI dashboards. Experience with Tableau, statistical sampling, and root-cause analysis is strongly preferred.</textarea>
+      </div>
 
-      <div class="h-4 w-[1px] bg-slate-200 mx-0.5"></div>
+      <div class="form-group">
+        <label>Matched Keywords</label>
+        <div class="keyword-tag-group" id="matched-keywords"></div>
+      </div>
 
-      <button onclick="exportJSON()" title="Export JSON Backup" class="p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors flex items-center space-x-1 shrink-0">
-        <i data-lucide="download-cloud" class="w-4 h-4 text-slate-500 shrink-0"></i>
-        <span class="hidden md:inline">Backup</span>
-      </button>
-
-      <label title="Import JSON Backup" class="p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer shrink-0">
-        <i data-lucide="upload-cloud" class="w-4 h-4 text-slate-500 shrink-0"></i>
-        <span class="hidden md:inline">Import</span>
-        <input type="file" id="json-input" accept=".json" class="hidden" onchange="importJSON(event)">
-      </label>
+      <div class="form-group" style="margin-top: 14px;">
+        <label>Missing Keywords (Recommended Additions)</label>
+        <div class="keyword-tag-group" id="missing-keywords"></div>
+      </div>
     </div>
-  </header>
 
-  <!-- ACTION & VIEW SWITCH BAR (Directly below header) -->
-  <div id="action-banner" class="bg-white border-b border-slate-200 px-3 sm:px-6 py-2.5 no-print shadow-xs">
-    <div class="max-w-[1700px] mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-      
-      <!-- Mobile View Tab Switcher (Visible on screens < lg) -->
-      <div id="mobile-preview-bar" class="lg:hidden inline-flex p-1 bg-slate-100 rounded-lg text-xs font-medium w-full sm:w-auto">
-        <button id="tab-editor" onclick="switchMobileView('editor')" class="flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-900 bg-white shadow-sm font-semibold flex items-center justify-center space-x-1.5 transition-all">
-          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-          <span>Editor</span>
-        </button>
-        <button id="tab-preview" onclick="switchMobileView('preview')" class="flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-1.5 transition-all">
-          <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-          <span>Live Preview</span>
-        </button>
-      </div>
-
-      <!-- Prominent Print / PDF Button -->
-      <div class="flex-1 sm:flex-initial flex justify-end">
-        <button onclick="window.print()" class="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] rounded-xl shadow-md hover:shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center space-x-2">
-          <i data-lucide="printer" class="w-4 h-4"></i>
-          <span>Print / Export PDF</span>
-        </button>
-      </div>
-
+    <!-- TAB 3: CUSTOM SECTIONS -->
+    <div id="custom-tab" class="tab-content">
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;">
+        Add specialized sections like Patents, Publications, Certifications, Leadership, or Family Estate Projects.
+      </p>
+      <div id="custom-sections-list"></div>
+      <button class="btn-add" onclick="addCustomSection()">+ Add Custom Section</button>
     </div>
-  </div>
 
-  <!-- MAIN WORKSPACE -->
-  <main class="flex-1 max-w-[1700px] w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-    
-    <!-- LEFT PANEL: FORM EDITOR (5 COLS ON DESKTOP) -->
-    <aside id="editor-pane" class="lg:col-span-5 space-y-4 no-print overflow-y-auto lg:max-h-[calc(100vh-8.5rem)] lg:pr-1">
-      
-      <!-- CONTROLS & THEME CUSTOMIZER -->
-      <div class="bg-white rounded-xl p-3.5 sm:p-4 border border-slate-200 shadow-sm space-y-3.5">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-            <i data-lucide="sliders" class="w-4 h-4 text-indigo-600"></i> Appearance & Layout
-          </span>
-          <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">ATS Safe</span>
+    <!-- TAB 4: QUICK APPLY HELPER -->
+    <div id="apply-tab" class="tab-content">
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">
+        1-Click copy standard profile details directly into online job portals.
+      </p>
+
+      <div class="quick-copy-item">
+        <div>
+          <div class="quick-copy-label">LinkedIn URL</div>
+          <div class="quick-copy-val" id="qc-linkedin">https://linkedin.com/in/alexrivera</div>
         </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <!-- Template Selector -->
-          <div>
-            <label class="block font-medium text-slate-700 mb-1">Resume Template</label>
-            <select id="cfg-template" onchange="updateConfig('template', this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:border-indigo-500 text-xs font-medium">
-              <option value="modern">Modern Minimal</option>
-              <option value="executive">Executive Serif</option>
-              <option value="compact">Tech Compact (2-Col)</option>
-              <option value="creative">Creative Sidebar</option>
-            </select>
-          </div>
-
-          <!-- Font Family -->
-          <div>
-            <label class="block font-medium text-slate-700 mb-1">Typography</label>
-            <select id="cfg-font" onchange="updateConfig('font', this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:border-indigo-500 text-xs font-medium">
-              <option value="font-inter">Inter (Clean Sans)</option>
-              <option value="font-roboto">Roboto (Geometric)</option>
-              <option value="font-merriweather">Merriweather (Classic Serif)</option>
-              <option value="font-poppins">Poppins (Modern Bold)</option>
-              <option value="font-outfit">Outfit (Contemporary)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs items-center">
-          <!-- Accent Color Palette -->
-          <div>
-            <label class="block font-medium text-slate-700 mb-1.5">Accent Color</label>
-            <div class="flex items-center space-x-2" id="color-palette">
-              <button onclick="updateConfig('accent', '#2563eb')" data-color="#2563eb" title="Royal Blue" class="palette-swatch w-6 h-6 rounded-full bg-blue-600 ring-2 ring-offset-2 ring-indigo-500"></button>
-              <button onclick="updateConfig('accent', '#0f766e')" data-color="#0f766e" title="Deep Teal" class="palette-swatch w-6 h-6 rounded-full bg-teal-700"></button>
-              <button onclick="updateConfig('accent', '#4f46e5')" data-color="#4f46e5" title="Indigo" class="palette-swatch w-6 h-6 rounded-full bg-indigo-600"></button>
-              <button onclick="updateConfig('accent', '#991b1b')" data-color="#991b1b" title="Burgundy" class="palette-swatch w-6 h-6 rounded-full bg-red-800"></button>
-              <button onclick="updateConfig('accent', '#1e293b')" data-color="#1e293b" title="Slate Noir" class="palette-swatch w-6 h-6 rounded-full bg-slate-800"></button>
-              <button onclick="updateConfig('accent', '#166534')" data-color="#166534" title="Forest" class="palette-swatch w-6 h-6 rounded-full bg-emerald-800"></button>
-            </div>
-          </div>
-
-          <!-- Spacing / Density -->
-          <div>
-            <label class="block font-medium text-slate-700 mb-1">Density & Spacing</label>
-            <select id="cfg-density" onchange="updateConfig('density', this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:border-indigo-500 text-xs font-medium">
-              <option value="density-compact">Compact (Fit 1 page)</option>
-              <option value="density-normal" selected>Balanced Normal</option>
-              <option value="density-spacious">Spacious</option>
-            </select>
-          </div>
-        </div>
+        <button class="btn-copy-chip" onclick="copyText('https://linkedin.com/in/alexrivera')">Copy</button>
       </div>
 
-      <!-- SECTION 1: PERSONAL INFORMATION -->
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-personal')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
-          <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
-            <i data-lucide="user" class="w-4 h-4 text-indigo-600"></i> Personal Contact & Summary
-          </span>
-          <i data-lucide="chevron-down" id="sec-personal-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
-        </button>
-        <div id="sec-personal" class="p-3.5 sm:p-4 space-y-3 border-t border-slate-100">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label class="block text-[11px] font-medium text-slate-600 mb-1">Full Name</label>
-              <input type="text" id="f-fullName" oninput="updateField('personal.fullName', this.value)" placeholder="e.g. Alex Morgan" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-[11px] font-medium text-slate-600 mb-1">Target Job Title</label>
-              <input type="text" id="f-jobTitle" oninput="updateField('personal.jobTitle', this.value)" placeholder="e.g. Senior Software Engineer" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <div>
-              <label class="block text-[11px] font-medium text-slate-600 mb-1">Email</label>
-              <input type="email" id="f-email" oninput="updateField('personal.email', this.value)" placeholder="alex@domain.com" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-[11px] font-medium text-slate-600 mb-1">Phone</label>
-              <input type="text" id="f-phone" oninput="updateField('personal.phone', this.value)" placeholder="+1 (555) 019-2834" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-[11px] font-medium text-slate-600 mb-1">Location</label>
-              <input type="text" id="f-location" oninput="updateField('personal.location', this.value)" placeholder="San Francisco, CA" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <div>
-              <label class="block text-[11px] font-medium text-slate-600 mb-1">Portfolio / Website</label>
-              <input type="text" id="f-website" oninput="updateField('personal.website', this.value)" placeholder="alexmorgan.dev" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-[11px] font-medium text-slate-600 mb-1">LinkedIn</label>
-              <input type="text" id="f-linkedin" oninput="updateField('personal.linkedin', this.value)" placeholder="linkedin.com/in/alex" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-[11px] font-medium text-slate-600 mb-1">GitHub / Other</label>
-              <input type="text" id="f-github" oninput="updateField('personal.github', this.value)" placeholder="github.com/alex" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-medium text-slate-600 mb-1">Professional Summary</label>
-            <textarea id="f-summary" rows="3" oninput="updateField('personal.summary', this.value)" placeholder="Results-driven professional with 6+ years of experience..." class="w-full px-2.5 py-2 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500 leading-relaxed"></textarea>
-          </div>
+      <div class="quick-copy-item">
+        <div>
+          <div class="quick-copy-label">Email Address</div>
+          <div class="quick-copy-val" id="qc-email">alex.rivera@example.com</div>
         </div>
+        <button class="btn-copy-chip" onclick="copyText(document.getElementById('inp-email').value)">Copy</button>
       </div>
 
-      <!-- SECTION 2: WORK EXPERIENCE -->
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-experience')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
-          <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
-            <i data-lucide="briefcase" class="w-4 h-4 text-indigo-600"></i> Work Experience
-          </span>
-          <i data-lucide="chevron-down" id="sec-experience-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
-        </button>
-        <div id="sec-experience" class="p-3.5 sm:p-4 space-y-3.5 border-t border-slate-100">
-          <div id="experience-items-list" class="space-y-3.5">
-            <!-- Dynamically populated cards -->
+      <div class="quick-copy-item">
+        <div>
+          <div class="quick-copy-label">Elevator Bio (150 Words)</div>
+          <div class="quick-copy-val">Quality Control Data Analyst with 5+ years specializing in...</div>
+        </div>
+        <button class="btn-copy-chip" onclick="copyText(document.getElementById('inp-summary').value)">Copy</button>
+      </div>
+
+      <div class="form-group" style="margin-top: 18px;">
+        <label>Action Verb Cheat-Sheet (Click to insert)</label>
+        <div class="keyword-tag-group">
+          <span class="kw-tag matched" style="cursor: pointer;" onclick="insertVerb('Automated')">Automated</span>
+          <span class="kw-tag matched" style="cursor: pointer;" onclick="insertVerb('Reconciled')">Reconciled</span>
+          <span class="kw-tag matched" style="cursor: pointer;" onclick="insertVerb('Architected')">Architected</span>
+          <span class="kw-tag matched" style="cursor: pointer;" onclick="insertVerb('Optimized')">Optimized</span>
+          <span class="kw-tag matched" style="cursor: pointer;" onclick="insertVerb('Eliminated')">Eliminated</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- WORKSPACE & LIVE SHEET -->
+  <main id="preview-workspace">
+    <header class="top-action-bar">
+      <div class="bar-controls">
+        <label style="margin: 0; font-size: 0.75rem;">Density:</label>
+        <select id="density-selector" style="width: 100px;" onchange="updateDensity(this.value)">
+          <option value="density-compact">Compact</option>
+          <option value="density-normal" selected>Normal</option>
+          <option value="density-relaxed">Relaxed</option>
+        </select>
+
+        <label style="margin: 0; font-size: 0.75rem;">Font:</label>
+        <select id="font-selector" style="width: 100px;" onchange="updateFont(this.value)">
+          <option value="font-serif" selected>Classic Serif</option>
+          <option value="font-sans">Modern Sans</option>
+        </select>
+      </div>
+
+      <div class="bar-controls">
+        <button class="btn-secondary" onclick="exportJSON()">Save JSON</button>
+        <button class="btn-secondary" onclick="document.getElementById('json-uploader').click()">Load JSON</button>
+        <input type="file" id="json-uploader" style="display:none" onchange="importJSON(event)">
+        <button class="btn-primary" onclick="window.print()">Print / Export PDF</button>
+      </div>
+    </header>
+
+    <div class="canvas-scroller">
+      <!-- RENDERED RESUME SHEET -->
+      <div class="resume-sheet density-normal font-serif" id="resume-document">
+        <header class="resume-header">
+          <div class="resume-name" id="out-name">Alex Rivera</div>
+          <div class="resume-title" id="out-title">Lead Data Analyst & Systems Auditor</div>
+          <div class="resume-contact" id="out-contact">
+            <span id="out-email">alex.rivera@example.com</span>
+            <span>•</span>
+            <span id="out-location">+91 98765 43210 • Vadodara, IN</span>
+            <span>•</span>
+            <span id="out-links">linkedin.com/in/alexrivera</span>
           </div>
-          <button onclick="addExperience()" class="w-full py-2.5 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>Add Work Experience</span>
-          </button>
-        </div>
+        </header>
+
+        <section class="resume-section" id="sec-summary">
+          <div class="resume-section-title">Professional Summary</div>
+          <div class="entry-summary" id="out-summary"></div>
+        </section>
+
+        <section class="resume-section" id="sec-experience">
+          <div class="resume-section-title">Work Experience</div>
+          <div id="out-experience"></div>
+        </section>
+
+        <!-- Custom Sections Injected Here -->
+        <div id="out-custom-sections"></div>
+
+        <section class="resume-section" id="sec-skills">
+          <div class="resume-section-title">Core Competencies & Tools</div>
+          <div class="entry-summary" id="out-skills" style="font-family: 'Geist', sans-serif; font-size: 0.85rem;"></div>
+        </section>
       </div>
-
-      <!-- SECTION 3: EDUCATION -->
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-education')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
-          <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
-            <i data-lucide="graduation-cap" class="w-4 h-4 text-indigo-600"></i> Education
-          </span>
-          <i data-lucide="chevron-down" id="sec-education-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
-        </button>
-        <div id="sec-education" class="p-3.5 sm:p-4 space-y-3.5 border-t border-slate-100">
-          <div id="education-items-list" class="space-y-3">
-            <!-- Dynamically populated cards -->
-          </div>
-          <button onclick="addEducation()" class="w-full py-2.5 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>Add Education</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- SECTION 4: SKILLS & TOOLS -->
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-skills')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
-          <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
-            <i data-lucide="cpu" class="w-4 h-4 text-indigo-600"></i> Skills & Expertise
-          </span>
-          <i data-lucide="chevron-down" id="sec-skills-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
-        </button>
-        <div id="sec-skills" class="p-3.5 sm:p-4 space-y-3 border-t border-slate-100">
-          <div id="skills-groups-list" class="space-y-3">
-            <!-- Dynamic skills groups -->
-          </div>
-          <button onclick="addSkillGroup()" class="w-full py-2.5 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>Add Skill Category</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- SECTION 5: PROJECTS -->
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-projects')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
-          <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
-            <i data-lucide="layers" class="w-4 h-4 text-indigo-600"></i> Projects
-          </span>
-          <i data-lucide="chevron-down" id="sec-projects-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
-        </button>
-        <div id="sec-projects" class="p-3.5 sm:p-4 space-y-3 border-t border-slate-100">
-          <div id="projects-items-list" class="space-y-3">
-            <!-- Dynamically populated projects -->
-          </div>
-          <button onclick="addProject()" class="w-full py-2.5 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>Add Project</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- SECTION 6: CERTIFICATIONS & AWARDS -->
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-certs')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
-          <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
-            <i data-lucide="award" class="w-4 h-4 text-indigo-600"></i> Certifications & Awards
-          </span>
-          <i data-lucide="chevron-down" id="sec-certs-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
-        </button>
-        <div id="sec-certs" class="p-3.5 sm:p-4 space-y-3 border-t border-slate-100">
-          <div id="certs-items-list" class="space-y-2">
-            <!-- Dynamic entries -->
-          </div>
-          <button onclick="addCertification()" class="w-full py-2.5 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>Add Certification</span>
-          </button>
-        </div>
-      </div>
-
-    </aside>
-
-    <!-- RIGHT PANEL: LIVE PREVIEW & PRINT CANVAS (7 COLS ON DESKTOP) -->
-    <section id="preview-pane" class="hidden lg:flex lg:col-span-7 flex-col items-center justify-start pb-12 w-full">
-      
-      <!-- Top Canvas Helper & Mobile Zoom Toolbar -->
-      <div id="preview-controls" class="w-full flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 mb-3 px-1 no-print">
-        <span class="flex items-center gap-1.5 text-slate-600 font-medium text-xs">
-          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-          <span>ATS Standard Safe Format</span>
-        </span>
-
-        <!-- Scale / Zoom Buttons -->
-        <div class="flex items-center bg-white border border-slate-200 rounded-lg p-0.5 shadow-xs">
-          <button onclick="adjustScale(-0.1)" title="Zoom Out" class="p-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded">
-            <i data-lucide="zoom-out" class="w-3.5 h-3.5"></i>
-          </button>
-          <span id="zoom-level-text" class="px-2 text-[11px] font-mono font-medium text-slate-600">100%</span>
-          <button onclick="adjustScale(0.1)" title="Zoom In" class="p-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded">
-            <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>
-          </button>
-          <button onclick="resetAutoScale()" title="Fit Screen" class="px-2 py-0.5 text-[11px] font-medium text-indigo-600 hover:bg-indigo-50 rounded">
-            Fit
-          </button>
-        </div>
-      </div>
-
-      <!-- AUTO-SCALE VIEWPORT -->
-      <div id="sheet-viewport">
-        <!-- RESUME PAPER CONTAINER (A4 BOUNDARIES) -->
-        <div id="resume-sheet" class="a4-sheet p-8 sm:p-11 rounded-sm text-slate-800 font-inter transition-transform duration-75">
-          <!-- Rendered Resume HTML injects here -->
-        </div>
-      </div>
-    </section>
-
+    </div>
   </main>
+</div>
 
-  <!-- TOAST NOTIFICATION -->
-  <div id="toast" class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 bg-slate-900 text-white px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl shadow-2xl text-xs flex items-center space-x-2 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none no-print">
-    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-    <span id="toast-message">Notification</span>
-  </div>
-
-  <!-- APPLICATION LOGIC -->
-  <script>
-    // State Store
-    const state = {
-      config: {
-        template: 'modern',
-        font: 'font-inter',
-        accent: '#2563eb',
-        density: 'density-normal'
+<script>
+  // STATE MANAGEMENT
+  let state = {
+    experiences: [
+      {
+        id: "exp_1",
+        active: true,
+        role: "Senior QC Data Analyst",
+        company: "Numerator Solutions",
+        date: "2023 - Present",
+        bullets: "Automated recurring pipeline validation audits using Python & SQL, cutting report turnaround from 48h to under 4h.\nSupervised receipt classification hierarchies across 2M+ consumer data rows with 99.8% precision.\nEngineered Jira ticketing bots for automated error routing and fast incident mitigation."
       },
-      personal: {
-        fullName: 'Alexander Reed',
-        jobTitle: 'Senior Full Stack Engineer',
-        email: 'alex.reed@example.com',
-        phone: '+1 (555) 234-8971',
-        location: 'San Francisco, CA',
-        website: 'alexreed.dev',
-        linkedin: 'linkedin.com/in/alexreed-dev',
-        github: 'github.com/alexreed',
-        summary: 'Accomplished Software Engineer with 6+ years of experience designing and scaling distributed systems, modern web architectures, and cloud-native microservices. Passionate about developer tooling, API reliability, and mentoring engineering teams.'
-      },
-      experience: [
-        {
-          id: 'exp-1',
-          role: 'Lead Full Stack Engineer',
-          company: 'Starlight Tech Inc.',
-          location: 'San Francisco, CA',
-          period: '2022 - Present',
-          bullets: [
-            'Architected event-driven microservices platform handling 15M+ daily requests using Node.js, Go, and Kafka.',
-            'Spearheaded frontend migration to Next.js with Tailwind CSS, reducing average page load times by 42%.',
-            'Mentored 6 junior/mid-level engineers, implemented strict automated CI/CD pipelines, and raised test coverage to 88%.'
-          ]
-        },
-        {
-          id: 'exp-2',
-          role: 'Software Engineer',
-          company: 'Vertex Cloud Solutions',
-          location: 'Austin, TX',
-          period: '2019 - 2022',
-          bullets: [
-            'Built real-time telemetry dashboards utilizing React, TypeScript, and GraphQL subscriptions.',
-            'Automated infrastructure provisioning on AWS (Terraform, ECS, RDS), lowering monthly hosting costs by 28%.',
-            'Collaborated with product designers to create an accessible, WCAG AA-compliant enterprise design system.'
-          ]
-        }
-      ],
-      education: [
-        {
-          id: 'edu-1',
-          degree: 'B.S. in Computer Science',
-          school: 'University of California, Berkeley',
-          location: 'Berkeley, CA',
-          year: '2015 - 2019',
-          details: 'GPA 3.85 / 4.0 · Dean’s Honors List · President of ACM Student Chapter'
-        }
-      ],
-      skills: [
-        { id: 'sk-1', category: 'Languages', items: 'TypeScript, JavaScript, Python, Go, SQL, HTML5/CSS3' },
-        { id: 'sk-2', category: 'Frameworks & Libraries', items: 'React, Next.js, Node.js, Express, Tailwind CSS, PostgreSQL' },
-        { id: 'sk-3', category: 'Cloud & DevOps', items: 'AWS, Docker, Kubernetes, CI/CD Actions, Redis, Git' }
-      ],
-      projects: [
-        {
-          id: 'prj-1',
-          title: 'PulseMetrics (Open-Source)',
-          tech: 'TypeScript, Go, React, Tailwind',
-          link: 'github.com/alexreed/pulsemetrics',
-          description: 'A lightweight distributed server monitoring tool with real-time alerting and zero external dependencies.'
-        },
-        {
-          id: 'prj-2',
-          title: 'Automated Resume ATS Scanner',
-          tech: 'Python, FastAPI, SpaCy, Next.js',
-          link: 'github.com/alexreed/resume-scanner',
-          description: 'Natural language keyword density analyzer comparing candidate resumes with job descriptions.'
-        }
-      ],
-      certifications: [
-        { id: 'cert-1', name: 'AWS Certified Solutions Architect – Associate', issuer: 'Amazon Web Services', year: '2023' },
-        { id: 'cert-2', name: 'Certified Kubernetes Administrator (CKA)', issuer: 'Cloud Native Computing Foundation', year: '2022' }
-      ]
-    };
+      {
+        id: "exp_2",
+        active: true,
+        role: "Quality Assurance Analyst",
+        company: "Apex Infotech",
+        date: "2021 - 2023",
+        bullets: "Conducted regression and contract validation on external web data extractions.\nAuthored ETL pipeline checks in PostgreSQL and managed weekly cross-functional error reviews."
+      }
+    ],
+    customSections: [
+      {
+        id: "cust_1",
+        title: "Key Projects & Initiatives",
+        active: true,
+        items: [
+          {
+            heading: "Automated Jira Bug Dispatcher",
+            subhead: "Python, Jira API, SQL",
+            date: "2024",
+            desc: "Designed and built an automated bug deduplication script parsing unhandled ETL faults and logging pre-triaged Jira issues with stack snapshots."
+          }
+        ]
+      }
+    ]
+  };
 
-    const defaultData = JSON.parse(JSON.stringify(state));
+  // INITIALIZATION
+  window.addEventListener('DOMContentLoaded', () => {
+    loadSavedState();
+    renderExperienceInputs();
+    renderCustomSectionInputs();
+    renderResume();
+    runATSAnalysis();
+  });
 
-    // Dynamic Scale State for Viewport Fitting
-    let currentScale = 1.0;
-    let manualScaleActive = false;
+  // TABS
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
 
-    // INIT
-    window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('craft_resume_state');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          Object.assign(state, parsed);
-        } catch(e) {
-          console.error("Could not load local session", e);
-        }
+  // DENSITY & FONTS
+  function updateDensity(val) {
+    const sheet = document.getElementById('resume-document');
+    sheet.classList.remove('density-compact', 'density-normal', 'density-relaxed');
+    sheet.classList.add(val);
+  }
+
+  function updateFont(val) {
+    const sheet = document.getElementById('resume-document');
+    sheet.classList.remove('font-serif', 'font-sans');
+    sheet.classList.add(val);
+  }
+
+  // EXPERIENCE MANAGEMENT
+  function renderExperienceInputs() {
+    const container = document.getElementById('experience-list');
+    container.innerHTML = '';
+
+    state.experiences.forEach((exp, index) => {
+      const card = document.createElement('div');
+      card.className = 'card-item';
+      card.innerHTML = `
+        <div class="card-item-header">
+          <span class="card-item-title">${exp.role || 'New Position'}</span>
+          <div class="btn-icon-group">
+            <label class="toggle-visibility">
+              <input type="checkbox" ${exp.active ? 'checked' : ''} onchange="toggleExperience(${index})"> Include
+            </label>
+            <button class="btn-danger-tiny" onclick="deleteExperience(${index})">✕</button>
+          </div>
+        </div>
+        <div class="row-2">
+          <input type="text" placeholder="Job Title" value="${exp.role}" oninput="updateExpField(${index}, 'role', this.value)">
+          <input type="text" placeholder="Company" value="${exp.company}" oninput="updateExpField(${index}, 'company', this.value)">
+        </div>
+        <div style="margin-top: 8px;">
+          <input type="text" placeholder="Duration (e.g. 2022 - Present)" value="${exp.date}" oninput="updateExpField(${index}, 'date', this.value)">
+        </div>
+        <div style="margin-top: 8px;">
+          <textarea placeholder="Bullet points (one per line)" oninput="updateExpField(${index}, 'bullets', this.value)">${exp.bullets}</textarea>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function addExperienceItem() {
+    state.experiences.push({
+      id: "exp_" + Date.now(),
+      active: true,
+      role: "",
+      company: "",
+      date: "",
+      bullets: ""
+    });
+    renderExperienceInputs();
+    renderResume();
+  }
+
+  function toggleExperience(index) {
+    state.experiences[index].active = !state.experiences[index].active;
+    renderResume();
+  }
+
+  function deleteExperience(index) {
+    state.experiences.splice(index, 1);
+    renderExperienceInputs();
+    renderResume();
+  }
+
+  function updateExpField(index, field, value) {
+    state.experiences[index][field] = value;
+    renderResume();
+  }
+
+  // CUSTOM SECTIONS MANAGEMENT
+  function renderCustomSectionInputs() {
+    const container = document.getElementById('custom-sections-list');
+    container.innerHTML = '';
+
+    state.customSections.forEach((sec, sIdx) => {
+      const secCard = document.createElement('div');
+      secCard.className = 'card-item';
+      secCard.innerHTML = `
+        <div class="card-item-header">
+          <input type="text" value="${sec.title}" style="font-weight:700; width:65%;" oninput="updateCustomSecTitle(${sIdx}, this.value)">
+          <div class="btn-icon-group">
+            <label class="toggle-visibility">
+              <input type="checkbox" ${sec.active ? 'checked' : ''} onchange="toggleCustomSec(${sIdx})"> Include
+            </label>
+            <button class="btn-danger-tiny" onclick="deleteCustomSec(${sIdx})">✕</button>
+          </div>
+        </div>
+        <div id="custom-items-container-${sIdx}"></div>
+        <button class="btn-add" style="margin-top:8px;" onclick="addCustomSecItem(${sIdx})">+ Add Item to ${sec.title}</button>
+      `;
+      container.appendChild(secCard);
+
+      const itemsContainer = secCard.querySelector(`#custom-items-container-${sIdx}`);
+      sec.items.forEach((item, iIdx) => {
+        const itemBox = document.createElement('div');
+        itemBox.style.cssText = "margin-top: 8px; padding: 8px; background: #0c0e15; border-radius: 4px; border: 1px solid #1c202d;";
+        itemBox.innerHTML = `
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <input type="text" placeholder="Title/Heading" value="${item.heading}" style="width:68%;" oninput="updateCustomItem(${sIdx}, ${iIdx}, 'heading', this.value)">
+            <input type="text" placeholder="Date/Tag" value="${item.date}" style="width:28%;" oninput="updateCustomItem(${sIdx}, ${iIdx}, 'date', this.value)">
+          </div>
+          <input type="text" placeholder="Subtitle / Role / Organization" value="${item.subhead}" style="margin-bottom:4px;" oninput="updateCustomItem(${sIdx}, ${iIdx}, 'subhead', this.value)">
+          <textarea placeholder="Description or bullet notes" oninput="updateCustomItem(${sIdx}, ${iIdx}, 'desc', this.value)">${item.desc}</textarea>
+          <div style="text-align:right; margin-top:4px;">
+            <button class="btn-danger-tiny" onclick="deleteCustomItem(${sIdx}, ${iIdx})">Remove Item</button>
+          </div>
+        `;
+        itemsContainer.appendChild(itemBox);
+      });
+    });
+  }
+
+  function addCustomSection() {
+    state.customSections.push({
+      id: "cust_" + Date.now(),
+      title: "Certifications & Achievements",
+      active: true,
+      items: [{ heading: "", subhead: "", date: "", desc: "" }]
+    });
+    renderCustomSectionInputs();
+    renderResume();
+  }
+
+  function toggleCustomSec(sIdx) {
+    state.customSections[sIdx].active = !state.customSections[sIdx].active;
+    renderResume();
+  }
+
+  function deleteCustomSec(sIdx) {
+    state.customSections.splice(sIdx, 1);
+    renderCustomSectionInputs();
+    renderResume();
+  }
+
+  function updateCustomSecTitle(sIdx, val) {
+    state.customSections[sIdx].title = val;
+    renderResume();
+  }
+
+  function addCustomSecItem(sIdx) {
+    state.customSections[sIdx].items.push({ heading: "", subhead: "", date: "", desc: "" });
+    renderCustomSectionInputs();
+    renderResume();
+  }
+
+  function updateCustomItem(sIdx, iIdx, field, val) {
+    state.customSections[sIdx].items[iIdx][field] = val;
+    renderResume();
+  }
+
+  function deleteCustomItem(sIdx, iIdx) {
+    state.customSections[sIdx].items.splice(iIdx, 1);
+    renderCustomSectionInputs();
+    renderResume();
+  }
+
+  // CORE RESUME RENDERER
+  function renderResume() {
+    // Basic Details
+    document.getElementById('out-name').innerText = document.getElementById('inp-name').value || 'Your Name';
+    document.getElementById('out-title').innerText = document.getElementById('inp-title').value || '';
+    document.getElementById('out-email').innerText = document.getElementById('inp-email').value || '';
+    document.getElementById('out-location').innerText = document.getElementById('inp-location').value || '';
+    document.getElementById('out-links').innerText = document.getElementById('inp-links').value || '';
+    document.getElementById('out-summary').innerText = document.getElementById('inp-summary').value || '';
+    document.getElementById('out-skills').innerText = document.getElementById('inp-skills').value || '';
+
+    // Experience Items
+    const expContainer = document.getElementById('out-experience');
+    expContainer.innerHTML = '';
+
+    state.experiences.filter(e => e.active).forEach(exp => {
+      const entry = document.createElement('div');
+      entry.className = 'resume-entry';
+
+      let bulletsHtml = '';
+      if (exp.bullets && exp.bullets.trim()) {
+        const lines = exp.bullets.split('\n').filter(l => l.trim().length > 0);
+        bulletsHtml = `<ul class="entry-bullets">${lines.map(l => `<li>${l}</li>`).join('')}</ul>`;
       }
 
-      syncInputsFromState();
-      renderAllFormLists();
-      renderResume();
-      lucide.createIcons();
-      updateAutoScaling();
+      entry.innerHTML = `
+        <div class="entry-header">
+          <div><span class="entry-role">${exp.role}</span> &mdash; <span class="entry-company">${exp.company}</span></div>
+          <div class="entry-date">${exp.date}</div>
+        </div>
+        ${bulletsHtml}
+      `;
+      expContainer.appendChild(entry);
     });
 
-    window.addEventListener('resize', () => {
-      if (!manualScaleActive) {
-        updateAutoScaling();
-      }
+    // Custom Sections
+    const customContainer = document.getElementById('out-custom-sections');
+    customContainer.innerHTML = '';
+
+    state.customSections.filter(s => s.active).forEach(sec => {
+      const secElement = document.createElement('section');
+      secElement.className = 'resume-section';
+
+      let itemsHtml = '';
+      sec.items.forEach(item => {
+        itemsHtml += `
+          <div class="resume-entry" style="margin-bottom:8px;">
+            <div class="entry-header">
+              <div><span class="entry-role">${item.heading}</span> ${item.subhead ? `&mdash; <span class="entry-company">${item.subhead}</span>` : ''}</div>
+              <div class="entry-date">${item.date}</div>
+            </div>
+            ${item.desc ? `<div class="entry-summary">${item.desc}</div>` : ''}
+          </div>
+        `;
+      });
+
+      secElement.innerHTML = `
+        <div class="resume-section-title">${sec.title}</div>
+        ${itemsHtml}
+      `;
+      customContainer.appendChild(secElement);
     });
 
-    // Calculates and applies proportional scaling to the A4 sheet so it fits on any mobile screen
-    function updateAutoScaling() {
-      const previewPane = document.getElementById('preview-pane');
-      const viewport = document.getElementById('sheet-viewport');
-      const sheet = document.getElementById('resume-sheet');
-      
-      if (previewPane.classList.contains('hidden') && window.innerWidth < 1024) return;
+    saveLocalState();
+  }
 
-      const viewportWidth = viewport.clientWidth || (window.innerWidth - 32);
-      const sheetWidth = sheet.offsetWidth || 794;
+  // ATS KEYWORD MATCHER ENGINE
+  function runATSAnalysis() {
+    const jdText = document.getElementById('inp-jd').value.toLowerCase();
+    const resumeText = (
+      document.getElementById('inp-summary').value + " " +
+      document.getElementById('inp-skills').value + " " +
+      state.experiences.map(e => e.role + " " + e.bullets).join(" ")
+    ).toLowerCase();
 
-      if (viewportWidth < sheetWidth + 16) {
-        currentScale = Math.max(0.38, Math.min(1.0, (viewportWidth - 12) / sheetWidth));
-      } else {
-        currentScale = 1.0;
-      }
+    // Common ATS Keywords & Technical Tokens
+    const targetKeywords = [
+      "sql", "python", "excel", "power bi", "jira", "etl", "tableau", 
+      "data quality", "validation", "audit", "sampling", "aws", "root-cause",
+      "regression", "analytics", "pipeline", "reconciliation"
+    ];
 
-      applyScale();
-    }
+    const matched = [];
+    const missing = [];
 
-    function applyScale() {
-      const sheet = document.getElementById('resume-sheet');
-      const viewport = document.getElementById('sheet-viewport');
-      const zoomText = document.getElementById('zoom-level-text');
-
-      sheet.style.transform = `scale(${currentScale})`;
-
-      const unscaledHeight = sheet.offsetHeight;
-      viewport.style.height = `${(unscaledHeight * currentScale) + 20}px`;
-
-      if (zoomText) {
-        zoomText.textContent = `${Math.round(currentScale * 100)}%`;
-      }
-    }
-
-    function adjustScale(delta) {
-      manualScaleActive = true;
-      currentScale = Math.max(0.35, Math.min(1.4, currentScale + delta));
-      applyScale();
-    }
-
-    function resetAutoScale() {
-      manualScaleActive = false;
-      updateAutoScaling();
-    }
-
-    // Save State to LocalStorage
-    function persistState() {
-      try {
-        localStorage.setItem('craft_resume_state', JSON.stringify(state));
-      } catch (e) {}
-    }
-
-    // Synchronize Input Fields with State
-    function syncInputsFromState() {
-      document.getElementById('f-fullName').value = state.personal.fullName || '';
-      document.getElementById('f-jobTitle').value = state.personal.jobTitle || '';
-      document.getElementById('f-email').value = state.personal.email || '';
-      document.getElementById('f-phone').value = state.personal.phone || '';
-      document.getElementById('f-location').value = state.personal.location || '';
-      document.getElementById('f-website').value = state.personal.website || '';
-      document.getElementById('f-linkedin').value = state.personal.linkedin || '';
-      document.getElementById('f-github').value = state.personal.github || '';
-      document.getElementById('f-summary').value = state.personal.summary || '';
-
-      document.getElementById('cfg-template').value = state.config.template;
-      document.getElementById('cfg-font').value = state.config.font;
-      document.getElementById('cfg-density').value = state.config.density;
-
-      document.querySelectorAll('.palette-swatch').forEach(sw => {
-        if (sw.dataset.color === state.config.accent) {
-          sw.classList.add('ring-2', 'ring-offset-2', 'ring-indigo-500');
+    targetKeywords.forEach(kw => {
+      if (jdText.includes(kw)) {
+        if (resumeText.includes(kw)) {
+          matched.push(kw);
         } else {
-          sw.classList.remove('ring-2', 'ring-offset-2', 'ring-indigo-500');
+          missing.push(kw);
         }
-      });
-    }
-
-    function updateConfig(key, value) {
-      state.config[key] = value;
-      persistState();
-      if (key === 'accent') {
-        document.querySelectorAll('.palette-swatch').forEach(sw => {
-          if (sw.dataset.color === value) {
-            sw.classList.add('ring-2', 'ring-offset-2', 'ring-indigo-500');
-          } else {
-            sw.classList.remove('ring-2', 'ring-offset-2', 'ring-indigo-500');
-          }
-        });
       }
-      renderResume();
-    }
+    });
 
-    function updateField(path, value) {
-      const parts = path.split('.');
-      if (parts.length === 2) {
-        state[parts[0]][parts[1]] = value;
-      } else {
-        state[path] = value;
+    // Render Badges
+    const matchedBox = document.getElementById('matched-keywords');
+    const missingBox = document.getElementById('missing-keywords');
+    matchedBox.innerHTML = matched.map(k => `<span class="kw-tag matched">✓ ${k}</span>`).join('') || '<span style="font-size:0.75rem; color:#6b7280;">No matches yet</span>';
+    missingBox.innerHTML = missing.map(k => `<span class="kw-tag missing">+ ${k}</span>`).join('') || '<span style="font-size:0.75rem; color:#6b7280;">None missing!</span>';
+
+    // Calculate Score
+    const total = matched.length + missing.length;
+    const score = total > 0 ? Math.round((matched.length / total) * 100) : 100;
+    const badge = document.getElementById('ats-score-badge');
+    badge.innerText = `${score}%`;
+    badge.style.borderColor = score >= 80 ? 'var(--success)' : (score >= 50 ? 'var(--warning)' : 'var(--danger)');
+  }
+
+  // UTILITIES
+  function copyText(str) {
+    navigator.clipboard.writeText(str);
+    alert('Copied to clipboard!');
+  }
+
+  function insertVerb(verb) {
+    const summary = document.getElementById('inp-summary');
+    summary.value = verb + " " + summary.value;
+    renderResume();
+  }
+
+  function saveLocalState() {
+    localStorage.setItem('pro_resume_state', JSON.stringify({
+      state,
+      personal: {
+        name: document.getElementById('inp-name').value,
+        title: document.getElementById('inp-title').value,
+        email: document.getElementById('inp-email').value,
+        loc: document.getElementById('inp-location').value,
+        links: document.getElementById('inp-links').value,
+        summary: document.getElementById('inp-summary').value,
+        skills: document.getElementById('inp-skills').value
       }
-      persistState();
-      renderResume();
-    }
+    }));
+  }
 
-    function toggleSection(id) {
-      const el = document.getElementById(id);
-      const icon = document.getElementById(id + '-icon');
-      if (el.classList.contains('hidden')) {
-        el.classList.remove('hidden');
-        if (icon) icon.classList.remove('-rotate-90');
-      } else {
-        el.classList.add('hidden');
-        if (icon) icon.classList.add('-rotate-90');
+  function loadSavedState() {
+    const raw = localStorage.getItem('pro_resume_state');
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed.state) state = parsed.state;
+      if (parsed.personal) {
+        document.getElementById('inp-name').value = parsed.personal.name || '';
+        document.getElementById('inp-title').value = parsed.personal.title || '';
+        document.getElementById('inp-email').value = parsed.personal.email || '';
+        document.getElementById('inp-location').value = parsed.personal.loc || '';
+        document.getElementById('inp-links').value = parsed.personal.links || '';
+        document.getElementById('inp-summary').value = parsed.personal.summary || '';
+        document.getElementById('inp-skills').value = parsed.personal.skills || '';
       }
+    } catch(e) {
+      console.error(e);
     }
-
-    // Responsive Mobile View Switcher
-    function switchMobileView(view) {
-      const editorPane = document.getElementById('editor-pane');
-      const previewPane = document.getElementById('preview-pane');
-      const tabEditor = document.getElementById('tab-editor');
-      const tabPreview = document.getElementById('tab-preview');
-
-      if (view === 'editor') {
-        editorPane.classList.remove('hidden');
-        previewPane.classList.add('hidden');
-        previewPane.classList.remove('flex');
-
-        tabEditor.className = "flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-900 bg-white shadow-sm font-semibold flex items-center justify-center space-x-1.5 transition-all";
-        tabPreview.className = "flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-1.5 transition-all";
-      } else {
-        editorPane.classList.add('hidden');
-        previewPane.classList.remove('hidden');
-        previewPane.classList.add('flex');
-
-        tabPreview.className = "flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-900 bg-white shadow-sm font-semibold flex items-center justify-center space-x-1.5 transition-all";
-        tabEditor.className = "flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-1.5 transition-all";
-        
-        setTimeout(updateAutoScaling, 50);
-      }
-    }
-
-    // -------------------------------------------------------------
-    // DYNAMIC CRUD LIST BUILDERS
-    // -------------------------------------------------------------
-
-    function renderAllFormLists() {
-      renderExperienceForm();
-      renderEducationForm();
-      renderSkillsForm();
-      renderProjectsForm();
-      renderCertificationsForm();
-    }
-
-    // 1. Work Experience
-    function renderExperienceForm() {
-      const list = document.getElementById('experience-items-list');
-      list.innerHTML = '';
-      state.experience.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = "p-3 bg-slate-50 rounded-lg border border-slate-200/80 space-y-2 text-xs relative";
-        div.innerHTML = `
-          <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
-            <span class="font-semibold text-slate-700">#${index + 1} ${item.role || 'Position'}</span>
-            <button onclick="removeExperience('${item.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete">
-              <i data-lucide="trash" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.role)}" oninput="updateExp('${item.id}', 'role', this.value)" placeholder="Job Title" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.company)}" oninput="updateExp('${item.id}', 'company', this.value)" placeholder="Company" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.location)}" oninput="updateExp('${item.id}', 'location', this.value)" placeholder="Location (City, ST / Remote)" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.period)}" oninput="updateExp('${item.id}', 'period', this.value)" placeholder="Dates (e.g. 2021 - Present)" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-          </div>
-          <div>
-            <label class="block text-[10px] text-slate-500 mb-0.5">Key Achievements / Bullets (One per line):</label>
-            <textarea rows="3" oninput="updateExpBullets('${item.id}', this.value)" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs leading-relaxed" placeholder="• Led development of...&#10;• Reduced latency by...">${escapeHtml(item.bullets.join('\n'))}</textarea>
-          </div>
-        `;
-        list.appendChild(div);
-      });
-      lucide.createIcons();
-    }
-
-    function addExperience() {
-      const newId = 'exp-' + Date.now();
-      state.experience.push({
-        id: newId,
-        role: '',
-        company: '',
-        location: '',
-        period: '',
-        bullets: ['Led cross-functional initiatives to improve operational efficiency.']
-      });
-      persistState();
-      renderExperienceForm();
-      renderResume();
-    }
-
-    function updateExp(id, key, value) {
-      const exp = state.experience.find(e => e.id === id);
-      if (exp) {
-        exp[key] = value;
-        persistState();
-        renderResume();
-      }
-    }
-
-    function updateExpBullets(id, text) {
-      const exp = state.experience.find(e => e.id === id);
-      if (exp) {
-        exp.bullets = text.split('\n').filter(b => b.trim().length > 0);
-        persistState();
-        renderResume();
-      }
-    }
-
-    function removeExperience(id) {
-      state.experience = state.experience.filter(e => e.id !== id);
-      persistState();
-      renderExperienceForm();
-      renderResume();
-    }
-
-    // 2. Education
-    function renderEducationForm() {
-      const list = document.getElementById('education-items-list');
-      list.innerHTML = '';
-      state.education.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = "p-3 bg-slate-50 rounded-lg border border-slate-200/80 space-y-2 text-xs";
-        div.innerHTML = `
-          <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
-            <span class="font-semibold text-slate-700">#${index + 1} ${item.degree || 'Degree'}</span>
-            <button onclick="removeEducation('${item.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete">
-              <i data-lucide="trash" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.degree)}" oninput="updateEdu('${item.id}', 'degree', this.value)" placeholder="Degree / Major" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.school)}" oninput="updateEdu('${item.id}', 'school', this.value)" placeholder="University / College" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.location)}" oninput="updateEdu('${item.id}', 'location', this.value)" placeholder="Location" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.year)}" oninput="updateEdu('${item.id}', 'year', this.value)" placeholder="Graduation Year / Range" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-          </div>
-          <input type="text" value="${escapeHtml(item.details || '')}" oninput="updateEdu('${item.id}', 'details', this.value)" placeholder="Honors, GPA, Relevant Coursework" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs">
-        `;
-        list.appendChild(div);
-      });
-      lucide.createIcons();
-    }
-
-    function addEducation() {
-      state.education.push({
-        id: 'edu-' + Date.now(),
-        degree: '',
-        school: '',
-        location: '',
-        year: '',
-        details: ''
-      });
-      persistState();
-      renderEducationForm();
-      renderResume();
-    }
-
-    function updateEdu(id, key, value) {
-      const edu = state.education.find(e => e.id === id);
-      if (edu) {
-        edu[key] = value;
-        persistState();
-        renderResume();
-      }
-    }
-
-    function removeEducation(id) {
-      state.education = state.education.filter(e => e.id !== id);
-      persistState();
-      renderEducationForm();
-      renderResume();
-    }
-
-    // 3. Skills Groups
-    function renderSkillsForm() {
-      const list = document.getElementById('skills-groups-list');
-      list.innerHTML = '';
-      state.skills.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = "p-2.5 bg-slate-50 rounded-lg border border-slate-200/80 space-y-1.5 text-xs";
-        div.innerHTML = `
-          <div class="flex items-center justify-between gap-2">
-            <input type="text" value="${escapeHtml(item.category)}" oninput="updateSkillGroup('${item.id}', 'category', this.value)" placeholder="Category (e.g. Languages)" class="font-semibold px-2 py-1.5 rounded border border-slate-200 flex-1">
-            <button onclick="removeSkillGroup('${item.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete">
-              <i data-lucide="trash" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-          <input type="text" value="${escapeHtml(item.items)}" oninput="updateSkillGroup('${item.id}', 'items', this.value)" placeholder="Items separated by commas (e.g. Python, Docker, Go)" class="w-full px-2 py-1.5 rounded border border-slate-200">
-        `;
-        list.appendChild(div);
-      });
-      lucide.createIcons();
-    }
-
-    function addSkillGroup() {
-      state.skills.push({
-        id: 'sk-' + Date.now(),
-        category: 'Specialization',
-        items: 'Item 1, Item 2, Item 3'
-      });
-      persistState();
-      renderSkillsForm();
-      renderResume();
-    }
-
-    function updateSkillGroup(id, key, value) {
-      const sk = state.skills.find(s => s.id === id);
-      if (sk) {
-        sk[key] = value;
-        persistState();
-        renderResume();
-      }
-    }
-
-    function removeSkillGroup(id) {
-      state.skills = state.skills.filter(s => s.id !== id);
-      persistState();
-      renderSkillsForm();
-      renderResume();
-    }
-
-    // 4. Projects
-    function renderProjectsForm() {
-      const list = document.getElementById('projects-items-list');
-      list.innerHTML = '';
-      state.projects.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = "p-3 bg-slate-50 rounded-lg border border-slate-200/80 space-y-2 text-xs";
-        div.innerHTML = `
-          <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
-            <span class="font-semibold text-slate-700">#${index + 1} ${item.title || 'Project'}</span>
-            <button onclick="removeProject('${item.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete">
-              <i data-lucide="trash" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.title)}" oninput="updateProject('${item.id}', 'title', this.value)" placeholder="Project Title" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.tech)}" oninput="updateProject('${item.id}', 'tech', this.value)" placeholder="Tech Stack (e.g. React, Node)" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-          </div>
-          <input type="text" value="${escapeHtml(item.link || '')}" oninput="updateProject('${item.id}', 'link', this.value)" placeholder="Project Link or Repo" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs">
-          <textarea rows="2" oninput="updateProject('${item.id}', 'description', this.value)" placeholder="Impact / Description of project..." class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs leading-relaxed">${escapeHtml(item.description)}</textarea>
-        `;
-        list.appendChild(div);
-      });
-      lucide.createIcons();
-    }
-
-    function addProject() {
-      state.projects.push({
-        id: 'prj-' + Date.now(),
-        title: '',
-        tech: '',
-        link: '',
-        description: ''
-      });
-      persistState();
-      renderProjectsForm();
-      renderResume();
-    }
-
-    function updateProject(id, key, value) {
-      const prj = state.projects.find(p => p.id === id);
-      if (prj) {
-        prj[key] = value;
-        persistState();
-        renderResume();
-      }
-    }
-
-    function removeProject(id) {
-      state.projects = state.projects.filter(p => p.id !== id);
-      persistState();
-      renderProjectsForm();
-      renderResume();
-    }
-
-    // 5. Certifications
-    function renderCertificationsForm() {
-      const list = document.getElementById('certs-items-list');
-      list.innerHTML = '';
-      state.certifications.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = "p-2.5 bg-slate-50 rounded-lg border border-slate-200/80 space-y-1.5 text-xs";
-        div.innerHTML = `
-          <div class="flex items-center justify-between gap-2">
-            <input type="text" value="${escapeHtml(item.name)}" oninput="updateCert('${item.id}', 'name', this.value)" placeholder="Certification Name" class="font-medium px-2 py-1.5 rounded border border-slate-200 flex-1">
-            <button onclick="removeCert('${item.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete">
-              <i data-lucide="trash" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.issuer)}" oninput="updateCert('${item.id}', 'issuer', this.value)" placeholder="Issuing Organization" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.year)}" oninput="updateCert('${item.id}', 'year', this.value)" placeholder="Year / Valid Until" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
-          </div>
-        `;
-        list.appendChild(div);
-      });
-      lucide.createIcons();
-    }
-
-    function addCertification() {
-      state.certifications.push({
-        id: 'cert-' + Date.now(),
-        name: '',
-        issuer: '',
-        year: ''
-      });
-      persistState();
-      renderCertificationsForm();
-      renderResume();
-    }
-
-    function updateCert(id, key, value) {
-      const c = state.certifications.find(item => item.id === id);
-      if (c) {
-        c[key] = value;
-        persistState();
-        renderResume();
-      }
-    }
-
-    function removeCert(id) {
-      state.certifications = state.certifications.filter(item => item.id !== id);
-      persistState();
-      renderCertificationsForm();
-      renderResume();
-    }
-
-    // -------------------------------------------------------------
-    // TEMPLATE RENDER ENGINE
-    // -------------------------------------------------------------
-
-    function renderResume() {
-      const container = document.getElementById('resume-sheet');
-      const { template, font, accent, density } = state.config;
-      
-      container.className = `a4-sheet p-8 sm:p-11 rounded-sm text-slate-800 ${font} ${density} transition-all duration-150`;
-
-      let gapMain = 'space-y-4';
-      let gapItem = 'space-y-2';
-      let textBase = 'text-[13px] leading-relaxed';
-      let titleSize = 'text-2xl';
-      if (density === 'density-compact') {
-        gapMain = 'space-y-2.5';
-        gapItem = 'space-y-1';
-        textBase = 'text-[11.5px] leading-normal';
-        titleSize = 'text-xl';
-      } else if (density === 'density-spacious') {
-        gapMain = 'space-y-6';
-        gapItem = 'space-y-3';
-        textBase = 'text-[14px] leading-relaxed';
-        titleSize = 'text-3xl';
-      }
-
-      if (template === 'executive') {
-        container.innerHTML = renderExecutiveTemplate(accent, gapMain, gapItem, textBase, titleSize);
-      } else if (template === 'compact') {
-        container.innerHTML = renderCompactTemplate(accent, gapMain, gapItem, textBase, titleSize);
-      } else if (template === 'creative') {
-        container.innerHTML = renderCreativeTemplate(accent, gapMain, gapItem, textBase, titleSize);
-      } else {
-        container.innerHTML = renderModernTemplate(accent, gapMain, gapItem, textBase, titleSize);
-      }
-
-      if (!manualScaleActive) {
-        updateAutoScaling();
-      } else {
-        applyScale();
-      }
-    }
-
-    // 1. TEMPLATE: MODERN MINIMAL
-    function renderModernTemplate(accent, gapMain, gapItem, textBase, titleSize) {
-      const { personal, experience, education, skills, projects, certifications } = state;
-
-      return `
-        <div class="${gapMain}">
-          <!-- Header -->
-          <div class="border-b-2 pb-4" style="border-color: ${accent};">
-            <h1 class="${titleSize} font-bold text-slate-900 tracking-tight">${escapeHtml(personal.fullName)}</h1>
-            <div class="text-sm font-semibold tracking-wide uppercase mt-0.5" style="color: ${accent};">${escapeHtml(personal.jobTitle)}</div>
-            
-            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2.5">
-              ${personal.email ? `<span>${escapeHtml(personal.email)}</span>` : ''}
-              ${personal.phone ? `<span>•</span><span>${escapeHtml(personal.phone)}</span>` : ''}
-              ${personal.location ? `<span>•</span><span>${escapeHtml(personal.location)}</span>` : ''}
-              ${personal.website ? `<span>•</span><span class="font-medium">${escapeHtml(personal.website)}</span>` : ''}
-              ${personal.linkedin ? `<span>•</span><span>${escapeHtml(personal.linkedin)}</span>` : ''}
-              ${personal.github ? `<span>•</span><span>${escapeHtml(personal.github)}</span>` : ''}
-            </div>
-          </div>
-
-          <!-- Professional Summary -->
-          ${personal.summary ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 pb-1 mb-1.5 border-b border-slate-200">Professional Summary</h2>
-              <p class="${textBase} text-slate-700 text-justify">${escapeHtml(personal.summary)}</p>
-            </div>
-          ` : ''}
-
-          <!-- Work Experience -->
-          ${experience.length > 0 ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 pb-1 mb-2 border-b border-slate-200">Work Experience</h2>
-              <div class="${gapItem}">
-                ${experience.map(exp => `
-                  <div>
-                    <div class="flex justify-between items-baseline">
-                      <span class="text-xs font-bold text-slate-900">${escapeHtml(exp.role)}</span>
-                      <span class="text-xs text-slate-500 font-medium">${escapeHtml(exp.period)}</span>
-                    </div>
-                    <div class="flex justify-between items-baseline text-xs text-slate-600 italic mb-1">
-                      <span class="font-semibold text-slate-700">${escapeHtml(exp.company)}</span>
-                      <span>${escapeHtml(exp.location)}</span>
-                    </div>
-                    <ul class="list-disc list-outside ml-4 ${textBase} text-slate-700 space-y-0.5">
-                      ${exp.bullets.map(b => `<li>${escapeHtml(b)}</li>`).join('')}
-                    </ul>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- Projects -->
-          ${projects.length > 0 ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 pb-1 mb-2 border-b border-slate-200">Featured Projects</h2>
-              <div class="${gapItem}">
-                ${projects.map(prj => `
-                  <div>
-                    <div class="flex justify-between items-baseline text-xs">
-                      <div>
-                        <span class="font-bold text-slate-900">${escapeHtml(prj.title)}</span>
-                        ${prj.tech ? `<span class="text-slate-500 font-normal ml-1.5">• ${escapeHtml(prj.tech)}</span>` : ''}
-                      </div>
-                      ${prj.link ? `<span class="text-xs text-slate-500 italic">${escapeHtml(prj.link)}</span>` : ''}
-                    </div>
-                    <p class="${textBase} text-slate-700 mt-0.5">${escapeHtml(prj.description)}</p>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- Education -->
-          ${education.length > 0 ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 pb-1 mb-2 border-b border-slate-200">Education</h2>
-              <div class="space-y-1.5">
-                ${education.map(edu => `
-                  <div class="flex justify-between items-start text-xs">
-                    <div>
-                      <div class="font-bold text-slate-900">${escapeHtml(edu.degree)}</div>
-                      <div class="text-slate-700">${escapeHtml(edu.school)} ${edu.location ? `— ${escapeHtml(edu.location)}` : ''}</div>
-                      ${edu.details ? `<div class="text-[11px] text-slate-500 italic mt-0.5">${escapeHtml(edu.details)}</div>` : ''}
-                    </div>
-                    <span class="text-xs text-slate-500 font-medium whitespace-nowrap">${escapeHtml(edu.year)}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- Skills & Tools -->
-          ${skills.length > 0 ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 pb-1 mb-1.5 border-b border-slate-200">Skills & Competencies</h2>
-              <div class="text-xs space-y-1">
-                ${skills.map(sk => `
-                  <div>
-                    <span class="font-bold text-slate-800">${escapeHtml(sk.category)}:</span>
-                    <span class="text-slate-700 ml-1">${escapeHtml(sk.items)}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- Certifications -->
-          ${certifications.length > 0 ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 pb-1 mb-1.5 border-b border-slate-200">Certifications & Honors</h2>
-              <div class="text-xs grid grid-cols-1 sm:grid-cols-2 gap-1">
-                ${certifications.map(c => `
-                  <div class="flex justify-between items-baseline pr-2">
-                    <span class="text-slate-800 font-medium">• ${escapeHtml(c.name)} <span class="text-slate-500 font-normal">(${escapeHtml(c.issuer)})</span></span>
-                    <span class="text-slate-500 text-[11px]">${escapeHtml(c.year)}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-        </div>
-      `;
-    }
-
-    // 2. TEMPLATE: EXECUTIVE SERIF
-    function renderExecutiveTemplate(accent, gapMain, gapItem, textBase, titleSize) {
-      const { personal, experience, education, skills, projects, certifications } = state;
-
-      return `
-        <div class="${gapMain} text-slate-900">
-          <!-- Centered Classic Header -->
-          <div class="text-center pb-3 border-b border-slate-400">
-            <h1 class="${titleSize} font-bold tracking-tight text-slate-950 font-merriweather">${escapeHtml(personal.fullName)}</h1>
-            <div class="text-xs font-semibold uppercase tracking-widest text-slate-600 mt-1">${escapeHtml(personal.jobTitle)}</div>
-            
-            <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-slate-600 mt-2">
-              ${personal.location ? `<span>${escapeHtml(personal.location)}</span>` : ''}
-              ${personal.phone ? `<span>|</span><span>${escapeHtml(personal.phone)}</span>` : ''}
-              ${personal.email ? `<span>|</span><span class="font-medium">${escapeHtml(personal.email)}</span>` : ''}
-              ${personal.website ? `<span>|</span><span>${escapeHtml(personal.website)}</span>` : ''}
-              ${personal.linkedin ? `<span>|</span><span>${escapeHtml(personal.linkedin)}</span>` : ''}
-            </div>
-          </div>
-
-          <!-- Summary -->
-          ${personal.summary ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-widest text-center mb-1 text-slate-900" style="color: ${accent}">Executive Profile</h2>
-              <div class="w-12 h-[1px] mx-auto mb-2" style="background-color: ${accent}"></div>
-              <p class="${textBase} text-slate-800 text-center italic max-w-2xl mx-auto">${escapeHtml(personal.summary)}</p>
-            </div>
-          ` : ''}
-
-          <!-- Experience -->
-          ${experience.length > 0 ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 pb-1 mb-2 border-b border-slate-300" style="border-left: 3px solid ${accent}; padding-left: 6px;">Professional Experience</h2>
-              <div class="${gapItem}">
-                ${experience.map(exp => `
-                  <div>
-                    <div class="flex justify-between items-baseline text-xs">
-                      <span class="font-bold text-slate-950">${escapeHtml(exp.role)}</span>
-                      <span class="text-slate-600">${escapeHtml(exp.period)}</span>
-                    </div>
-                    <div class="flex justify-between items-baseline text-xs text-slate-700 italic mb-1">
-                      <span>${escapeHtml(exp.company)}</span>
-                      <span>${escapeHtml(exp.location)}</span>
-                    </div>
-                    <ul class="list-disc list-outside ml-4 ${textBase} text-slate-800 space-y-0.5">
-                      ${exp.bullets.map(b => `<li>${escapeHtml(b)}</li>`).join('')}
-                    </ul>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- Education -->
-          ${education.length > 0 ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 pb-1 mb-2 border-b border-slate-300" style="border-left: 3px solid ${accent}; padding-left: 6px;">Education & Credentials</h2>
-              <div class="space-y-1.5">
-                ${education.map(edu => `
-                  <div class="flex justify-between items-start text-xs">
-                    <div>
-                      <span class="font-bold text-slate-900">${escapeHtml(edu.degree)}</span>
-                      <span class="text-slate-700">, ${escapeHtml(edu.school)}</span>
-                      ${edu.details ? `<div class="text-[11px] text-slate-600 italic">${escapeHtml(edu.details)}</div>` : ''}
-                    </div>
-                    <span class="text-xs text-slate-600 font-medium">${escapeHtml(edu.year)}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- Projects -->
-          ${projects.length > 0 ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 pb-1 mb-2 border-b border-slate-300" style="border-left: 3px solid ${accent}; padding-left: 6px;">Key Projects & Initiatives</h2>
-              <div class="${gapItem}">
-                ${projects.map(prj => `
-                  <div>
-                    <div class="flex justify-between items-baseline text-xs">
-                      <span class="font-bold text-slate-950">${escapeHtml(prj.title)}</span>
-                      ${prj.link ? `<span class="text-slate-600 text-[11px]">${escapeHtml(prj.link)}</span>` : ''}
-                    </div>
-                    <p class="${textBase} text-slate-800">${escapeHtml(prj.description)}</p>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- Skills -->
-          ${skills.length > 0 ? `
-            <div>
-              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 pb-1 mb-1.5 border-b border-slate-300" style="border-left: 3px solid ${accent}; padding-left: 6px;">Core Competencies</h2>
-              <div class="text-xs space-y-1">
-                ${skills.map(sk => `
-                  <div>
-                    <span class="font-bold text-slate-900">${escapeHtml(sk.category)}:</span>
-                    <span class="text-slate-800 ml-1">${escapeHtml(sk.items)}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-        </div>
-      `;
-    }
-
-    // 3. TEMPLATE: TECH COMPACT
-    function renderCompactTemplate(accent, gapMain, gapItem, textBase, titleSize) {
-      const { personal, experience, education, skills, projects, certifications } = state;
-
-      return `
-        <div class="${gapMain}">
-          <!-- Compact Header -->
-          <div class="flex items-center justify-between border-b pb-3" style="border-color: ${accent}">
-            <div>
-              <h1 class="${titleSize} font-bold text-slate-900 tracking-tight">${escapeHtml(personal.fullName)}</h1>
-              <div class="text-xs font-semibold tracking-wide" style="color: ${accent}">${escapeHtml(personal.jobTitle)}</div>
-            </div>
-            <div class="text-right text-[11px] text-slate-600 space-y-0.5">
-              <div>${escapeHtml(personal.email)} • ${escapeHtml(personal.phone)}</div>
-              <div>${escapeHtml(personal.location)} • ${escapeHtml(personal.website || personal.github || '')}</div>
-            </div>
-          </div>
-
-          <!-- Summary -->
-          ${personal.summary ? `
-            <p class="${textBase} text-slate-700 bg-slate-50 p-2.5 rounded border border-slate-200/60">${escapeHtml(personal.summary)}</p>
-          ` : ''}
-
-          <!-- Two Column Body -->
-          <div class="grid grid-cols-12 gap-5 items-start">
-            
-            <!-- Left (Main Column 8 cols) -->
-            <div class="col-span-8 space-y-4">
-              <!-- Experience -->
-              ${experience.length > 0 ? `
-                <div>
-                  <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 pb-1 mb-2 border-b border-slate-200 flex items-center justify-between">
-                    <span>Experience</span>
-                  </h2>
-                  <div class="${gapItem}">
-                    ${experience.map(exp => `
-                      <div>
-                        <div class="flex justify-between items-baseline text-xs">
-                          <span class="font-bold text-slate-900">${escapeHtml(exp.role)}</span>
-                          <span class="text-[11px] text-slate-500 font-medium">${escapeHtml(exp.period)}</span>
-                        </div>
-                        <div class="text-xs text-slate-600 font-medium mb-1">${escapeHtml(exp.company)} · ${escapeHtml(exp.location)}</div>
-                        <ul class="list-disc list-outside ml-3.5 ${textBase} text-slate-700 space-y-0.5">
-                          ${exp.bullets.map(b => `<li>${escapeHtml(b)}</li>`).join('')}
-                        </ul>
-                      </div>
-                    `).join('')}
-                  </div>
-                </div>
-              ` : ''}
-
-              <!-- Projects -->
-              ${projects.length > 0 ? `
-                <div>
-                  <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 pb-1 mb-2 border-b border-slate-200">Key Projects</h2>
-                  <div class="${gapItem}">
-                    ${projects.map(prj => `
-                      <div>
-                        <div class="flex justify-between items-baseline text-xs">
-                          <span class="font-bold text-slate-900">${escapeHtml(prj.title)}</span>
-                          ${prj.link ? `<span class="text-[11px] text-slate-500 italic">${escapeHtml(prj.link)}</span>` : ''}
-                        </div>
-                        ${prj.tech ? `<div class="text-[10px] text-indigo-700 font-mono mt-0.5">${escapeHtml(prj.tech)}</div>` : ''}
-                        <p class="${textBase} text-slate-700 mt-0.5">${escapeHtml(prj.description)}</p>
-                      </div>
-                    `).join('')}
-                  </div>
-                </div>
-              ` : ''}
-            </div>
-
-            <!-- Right (Sidebar 4 cols) -->
-            <div class="col-span-4 space-y-4">
-              <!-- Skills as Badges -->
-              ${skills.length > 0 ? `
-                <div>
-                  <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 pb-1 mb-2 border-b border-slate-200">Skills</h2>
-                  <div class="space-y-2">
-                    ${skills.map(sk => `
-                      <div>
-                        <div class="text-[10.5px] font-bold text-slate-700 uppercase mb-1">${escapeHtml(sk.category)}</div>
-                        <div class="flex flex-wrap gap-1">
-                          ${sk.items.split(',').map(item => `
-                            <span class="text-[10px] font-medium bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded border border-slate-200">${escapeHtml(item.trim())}</span>
-                          `).join('')}
-                        </div>
-                      </div>
-                    `).join('')}
-                  </div>
-                </div>
-              ` : ''}
-
-              <!-- Education -->
-              ${education.length > 0 ? `
-                <div>
-                  <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 pb-1 mb-2 border-b border-slate-200">Education</h2>
-                  <div class="space-y-2">
-                    ${education.map(edu => `
-                      <div class="text-xs">
-                        <div class="font-bold text-slate-900">${escapeHtml(edu.degree)}</div>
-                        <div class="text-slate-700">${escapeHtml(edu.school)}</div>
-                        <div class="text-[11px] text-slate-500">${escapeHtml(edu.year)}</div>
-                        ${edu.details ? `<div class="text-[10px] text-slate-500 mt-0.5">${escapeHtml(edu.details)}</div>` : ''}
-                      </div>
-                    `).join('')}
-                  </div>
-                </div>
-              ` : ''}
-
-              <!-- Certifications -->
-              ${certifications.length > 0 ? `
-                <div>
-                  <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 pb-1 mb-2 border-b border-slate-200">Certifications</h2>
-                  <div class="space-y-1.5 text-xs">
-                    ${certifications.map(c => `
-                      <div>
-                        <div class="font-semibold text-slate-800">${escapeHtml(c.name)}</div>
-                        <div class="text-[10.5px] text-slate-500">${escapeHtml(c.issuer)} · ${escapeHtml(c.year)}</div>
-                      </div>
-                    `).join('')}
-                  </div>
-                </div>
-              ` : ''}
-            </div>
-
-          </div>
-        </div>
-      `;
-    }
-
-    // 4. TEMPLATE: CREATIVE SIDEBAR
-    function renderCreativeTemplate(accent, gapMain, gapItem, textBase, titleSize) {
-      const { personal, experience, education, skills, projects, certifications } = state;
-
-      return `
-        <div class="grid grid-cols-12 gap-0 -m-8 sm:-m-11 min-h-[297mm]">
-          
-          <!-- LEFT SIDEBAR (4 COLS) -->
-          <div class="col-span-4 p-6 sm:p-7 text-white space-y-5" style="background-color: ${accent}">
-            <!-- Name & Title -->
-            <div>
-              <div class="w-16 h-16 rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center text-xl font-bold mb-3 tracking-wider">
-                ${personal.fullName.split(' ').map(n=>n[0]).join('').substring(0, 2)}
-              </div>
-              <h1 class="text-xl font-bold tracking-tight text-white leading-tight">${escapeHtml(personal.fullName)}</h1>
-              <div class="text-xs font-medium text-white/80 mt-1 uppercase tracking-wider">${escapeHtml(personal.jobTitle)}</div>
-            </div>
-
-            <!-- Contact info -->
-            <div>
-              <h2 class="text-[11px] font-bold uppercase tracking-widest text-white/90 border-b border-white/30 pb-1 mb-2">Contact</h2>
-              <div class="space-y-1.5 text-xs text-white/90">
-                ${personal.email ? `<div class="break-all">📧 ${escapeHtml(personal.email)}</div>` : ''}
-                ${personal.phone ? `<div>📱 ${escapeHtml(personal.phone)}</div>` : ''}
-                ${personal.location ? `<div>📍 ${escapeHtml(personal.location)}</div>` : ''}
-                ${personal.website ? `<div class="break-all">🌐 ${escapeHtml(personal.website)}</div>` : ''}
-                ${personal.linkedin ? `<div class="break-all">💼 ${escapeHtml(personal.linkedin)}</div>` : ''}
-                ${personal.github ? `<div class="break-all">🐙 ${escapeHtml(personal.github)}</div>` : ''}
-              </div>
-            </div>
-
-            <!-- Education -->
-            ${education.length > 0 ? `
-              <div>
-                <h2 class="text-[11px] font-bold uppercase tracking-widest text-white/90 border-b border-white/30 pb-1 mb-2">Education</h2>
-                <div class="space-y-2.5">
-                  ${education.map(edu => `
-                    <div class="text-xs">
-                      <div class="font-bold text-white">${escapeHtml(edu.degree)}</div>
-                      <div class="text-white/80">${escapeHtml(edu.school)}</div>
-                      <div class="text-[10px] text-white/70">${escapeHtml(edu.year)}</div>
-                      ${edu.details ? `<div class="text-[10px] text-white/70 italic mt-0.5">${escapeHtml(edu.details)}</div>` : ''}
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            ` : ''}
-
-            <!-- Skills -->
-            ${skills.length > 0 ? `
-              <div>
-                <h2 class="text-[11px] font-bold uppercase tracking-widest text-white/90 border-b border-white/30 pb-1 mb-2">Expertise</h2>
-                <div class="space-y-2">
-                  ${skills.map(sk => `
-                    <div>
-                      <div class="text-[10px] font-bold uppercase text-white/75">${escapeHtml(sk.category)}</div>
-                      <div class="text-xs text-white/95 mt-0.5">${escapeHtml(sk.items)}</div>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            ` : ''}
-
-            <!-- Certs -->
-            ${certifications.length > 0 ? `
-              <div>
-                <h2 class="text-[11px] font-bold uppercase tracking-widest text-white/90 border-b border-white/30 pb-1 mb-2">Certifications</h2>
-                <div class="space-y-1.5 text-xs text-white/90">
-                  ${certifications.map(c => `
-                    <div>
-                      <div class="font-semibold">${escapeHtml(c.name)}</div>
-                      <div class="text-[10px] text-white/70">${escapeHtml(c.issuer)} · ${escapeHtml(c.year)}</div>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            ` : ''}
-          </div>
-
-          <!-- RIGHT MAIN BODY (8 COLS) -->
-          <div class="col-span-8 p-6 sm:p-8 space-y-4 bg-white">
-            <!-- Profile / Summary -->
-            ${personal.summary ? `
-              <div>
-                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 pb-1 mb-1.5 border-b border-slate-200">About Me</h2>
-                <p class="${textBase} text-slate-700">${escapeHtml(personal.summary)}</p>
-              </div>
-            ` : ''}
-
-            <!-- Experience -->
-            ${experience.length > 0 ? `
-              <div>
-                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 pb-1 mb-2 border-b border-slate-200">Professional Experience</h2>
-                <div class="${gapItem}">
-                  ${experience.map(exp => `
-                    <div>
-                      <div class="flex justify-between items-baseline text-xs">
-                        <span class="font-bold text-slate-900">${escapeHtml(exp.role)}</span>
-                        <span class="text-xs text-slate-500">${escapeHtml(exp.period)}</span>
-                      </div>
-                      <div class="text-xs text-slate-600 italic mb-1">${escapeHtml(exp.company)} · ${escapeHtml(exp.location)}</div>
-                      <ul class="list-disc list-outside ml-4 ${textBase} text-slate-700 space-y-0.5">
-                        ${exp.bullets.map(b => `<li>${escapeHtml(b)}</li>`).join('')}
-                      </ul>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            ` : ''}
-
-            <!-- Projects -->
-            ${projects.length > 0 ? `
-              <div>
-                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 pb-1 mb-2 border-b border-slate-200">Projects & Contributions</h2>
-                <div class="${gapItem}">
-                  ${projects.map(prj => `
-                    <div>
-                      <div class="flex justify-between items-baseline text-xs">
-                        <span class="font-bold text-slate-900">${escapeHtml(prj.title)}</span>
-                        ${prj.link ? `<span class="text-xs text-slate-500 italic">${escapeHtml(prj.link)}</span>` : ''}
-                      </div>
-                      ${prj.tech ? `<div class="text-[10px] text-slate-500">${escapeHtml(prj.tech)}</div>` : ''}
-                      <p class="${textBase} text-slate-700 mt-0.5">${escapeHtml(prj.description)}</p>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            ` : ''}
-          </div>
-
-        </div>
-      `;
-    }
-
-    // -------------------------------------------------------------
-    // BACKUP, RESTORE & DATA HELPERS
-    // -------------------------------------------------------------
-
-    function exportJSON() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-      const downloadAnchor = document.createElement('a');
-      const filename = `resume_${(state.personal.fullName || 'craft').replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", filename);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      showToast("Resume data exported to JSON!");
-    }
-
-    function importJSON(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const imported = JSON.parse(e.target.result);
-          if (imported.personal && imported.experience) {
-            Object.assign(state, imported);
-            persistState();
-            syncInputsFromState();
-            renderAllFormLists();
-            renderResume();
-            showToast("Resume loaded from JSON successfully!");
-          } else {
-            showToast("Invalid JSON resume structure.");
-          }
-        } catch (err) {
-          showToast("Error reading JSON file.");
+  }
+
+  function exportJSON() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ state }));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", "resume_master_profile.json");
+    dlAnchor.click();
+  }
+
+  function importJSON(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      try {
+        const imported = JSON.parse(evt.target.result);
+        if (imported.state) {
+          state = imported.state;
+          renderExperienceInputs();
+          renderCustomSectionInputs();
+          renderResume();
+          runATSAnalysis();
         }
-      };
-      reader.readAsText(file);
-      event.target.value = '';
-    }
-
-    function loadSampleData() {
-      Object.assign(state, JSON.parse(JSON.stringify(defaultData)));
-      persistState();
-      syncInputsFromState();
-      renderAllFormLists();
-      renderResume();
-      showToast("Sample resume loaded!");
-    }
-
-    function clearAllData() {
-      state.personal = {
-        fullName: 'Your Name',
-        jobTitle: 'Your Target Role',
-        email: '',
-        phone: '',
-        location: '',
-        website: '',
-        linkedin: '',
-        github: '',
-        summary: ''
-      };
-      state.experience = [];
-      state.education = [];
-      state.skills = [];
-      state.projects = [];
-      state.certifications = [];
-
-      persistState();
-      syncInputsFromState();
-      renderAllFormLists();
-      renderResume();
-      showToast("Editor cleared!");
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toast-message').textContent = msg;
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 2600);
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-  </script>
+      } catch(err) {
+        alert("Invalid JSON profile file.");
+      }
+    };
+    reader.readAsText(file);
+  }
+</script>
 </body>
 </html>
