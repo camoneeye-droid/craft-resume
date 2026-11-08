@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CraftResume Studio | Free ATS-Friendly Resume Builder</title>
   
   <!-- Tailwind CSS -->
@@ -35,16 +35,26 @@
   </script>
 
   <style>
-    /* Standard A4 Paper Ratio & Shadow */
+    /* Fixed standard A4 dimensions */
     .a4-sheet {
       width: 210mm;
       min-height: 297mm;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15), 0 0 1px 1px rgba(0,0,0,0.05);
       background-color: #ffffff;
       color: #1f2937;
-      margin: 0 auto;
       box-sizing: border-box;
       position: relative;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12), 0 0 1px 1px rgba(0,0,0,0.05);
+      transform-origin: top center;
+    }
+
+    /* Outer wrapper that scales down the A4 sheet on small screens */
+    #sheet-viewport {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-x: hidden;
+      transition: height 0.15s ease-out;
     }
 
     /* Print Viewport Optimizations */
@@ -60,7 +70,7 @@
         padding: 0 !important;
         margin: 0 !important;
       }
-      .no-print, header, aside, #toast, .action-bar, #mobile-preview-bar {
+      .no-print, header, aside, #toast, .action-bar, #mobile-preview-bar, #preview-controls, #action-banner {
         display: none !important;
       }
       main {
@@ -76,6 +86,11 @@
         margin: 0 !important;
         background: transparent !important;
       }
+      #sheet-viewport {
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+      }
       .a4-sheet {
         box-shadow: none !important;
         margin: 0 !important;
@@ -83,17 +98,18 @@
         min-height: auto !important;
         border: none !important;
         border-radius: 0 !important;
+        transform: none !important;
         page-break-after: avoid;
       }
     }
 
     /* Custom Scrollbars */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-track {
-      background: #f3f4f6;
+      background: #f1f5f9;
     }
     ::-webkit-scrollbar-thumb {
       background: #cbd5e1;
@@ -102,96 +118,97 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
     }
-
-    /* Accordion transitions */
-    .section-content {
-      transition: max-height 0.25s ease-out, opacity 0.2s ease-out;
-    }
   </style>
 </head>
 
 <body class="bg-slate-100 text-slate-800 font-inter min-h-screen flex flex-col selection:bg-indigo-100 selection:text-indigo-900">
 
   <!-- TOP NAVIGATION HEADER -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 sm:px-6 py-2.5 flex items-center justify-between no-print">
-    <div class="flex items-center space-x-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
-        <i data-lucide="file-text" class="w-5 h-5"></i>
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-3 sm:px-6 py-2.5 flex items-center justify-between no-print">
+    <!-- Brand / Logo -->
+    <div class="flex items-center space-x-2.5 min-w-0">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
+        <i data-lucide="file-text" class="w-4 h-4"></i>
       </div>
-      <div>
-        <div class="flex items-center space-x-2">
-          <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">CraftResume</h1>
-          <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">Studio</span>
+      <div class="min-w-0">
+        <div class="flex items-center space-x-1.5">
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-none truncate">CraftResume</h1>
+          <span class="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">Studio</span>
         </div>
-        <p class="text-[11px] text-slate-400 hidden sm:block">ATS-compliant, instant export & zero sign-in</p>
+        <p class="text-[10px] text-slate-400 hidden sm:block truncate">ATS-compliant, instant export</p>
       </div>
     </div>
 
-    <!-- Top Action Buttons -->
-    <div class="flex items-center space-x-2 sm:space-x-2.5">
-      <!-- Data Management -->
-      <button onclick="loadSampleData()" class="px-2.5 sm:px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center space-x-1.5">
-        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+    <!-- Quick Utilities -->
+    <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
+      <button onclick="loadSampleData()" title="Load Sample Data" class="px-2 sm:px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center space-x-1 shrink-0">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500 shrink-0"></i>
         <span class="hidden sm:inline">Sample Data</span>
       </button>
 
-      <button onclick="clearAllData()" class="px-2.5 sm:px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors flex items-center space-x-1.5">
-        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-        <span class="hidden md:inline">Reset</span>
+      <button onclick="clearAllData()" title="Reset All Fields" class="px-2 sm:px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors flex items-center space-x-1 shrink-0">
+        <i data-lucide="trash-2" class="w-3.5 h-3.5 shrink-0"></i>
+        <span class="hidden sm:inline">Reset</span>
       </button>
 
-      <div class="h-4 w-[1px] bg-slate-200 mx-1"></div>
+      <div class="h-4 w-[1px] bg-slate-200 mx-0.5"></div>
 
-      <!-- JSON Backup & Restore -->
-      <button onclick="exportJSON()" title="Backup to JSON" class="p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors flex items-center space-x-1">
-        <i data-lucide="download-cloud" class="w-4 h-4 text-slate-500"></i>
-        <span class="hidden lg:inline">Backup</span>
+      <button onclick="exportJSON()" title="Export JSON Backup" class="p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors flex items-center space-x-1 shrink-0">
+        <i data-lucide="download-cloud" class="w-4 h-4 text-slate-500 shrink-0"></i>
+        <span class="hidden md:inline">Backup</span>
       </button>
 
-      <label title="Import JSON" class="p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer">
-        <i data-lucide="upload-cloud" class="w-4 h-4 text-slate-500"></i>
-        <span class="hidden lg:inline">Import</span>
+      <label title="Import JSON Backup" class="p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer shrink-0">
+        <i data-lucide="upload-cloud" class="w-4 h-4 text-slate-500 shrink-0"></i>
+        <span class="hidden md:inline">Import</span>
         <input type="file" id="json-input" accept=".json" class="hidden" onchange="importJSON(event)">
       </label>
-
-      <!-- PRINT / PDF BUTTON -->
-      <button onclick="window.print()" class="px-3.5 sm:px-4 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 rounded-lg shadow-sm hover:shadow transition-all flex items-center space-x-1.5">
-        <i data-lucide="printer" class="w-4 h-4"></i>
-        <span>Print / PDF</span>
-      </button>
     </div>
   </header>
 
-  <!-- MOBILE PREVIEW SWITCH TAB (Visible on small screens only) -->
-  <div id="mobile-preview-bar" class="lg:hidden bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between no-print">
-    <div class="inline-flex p-1 bg-slate-100 rounded-lg text-xs font-medium w-full">
-      <button id="tab-editor" onclick="switchMobileView('editor')" class="flex-1 py-1.5 rounded-md text-slate-900 bg-white shadow-sm font-semibold flex items-center justify-center space-x-1.5">
-        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-        <span>Editor</span>
-      </button>
-      <button id="tab-preview" onclick="switchMobileView('preview')" class="flex-1 py-1.5 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-1.5">
-        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-        <span>Live Preview</span>
-      </button>
+  <!-- ACTION & VIEW SWITCH BAR (Directly below header) -->
+  <div id="action-banner" class="bg-white border-b border-slate-200 px-3 sm:px-6 py-2.5 no-print shadow-xs">
+    <div class="max-w-[1700px] mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+      
+      <!-- Mobile View Tab Switcher (Visible on screens < lg) -->
+      <div id="mobile-preview-bar" class="lg:hidden inline-flex p-1 bg-slate-100 rounded-lg text-xs font-medium w-full sm:w-auto">
+        <button id="tab-editor" onclick="switchMobileView('editor')" class="flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-900 bg-white shadow-sm font-semibold flex items-center justify-center space-x-1.5 transition-all">
+          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+          <span>Editor</span>
+        </button>
+        <button id="tab-preview" onclick="switchMobileView('preview')" class="flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-1.5 transition-all">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+          <span>Live Preview</span>
+        </button>
+      </div>
+
+      <!-- Prominent Print / PDF Button -->
+      <div class="flex-1 sm:flex-initial flex justify-end">
+        <button onclick="window.print()" class="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] rounded-xl shadow-md hover:shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center space-x-2">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>Print / Export PDF</span>
+        </button>
+      </div>
+
     </div>
   </div>
 
   <!-- MAIN WORKSPACE -->
-  <main class="flex-1 max-w-[1700px] w-full mx-auto p-3 sm:p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+  <main class="flex-1 max-w-[1700px] w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
     
     <!-- LEFT PANEL: FORM EDITOR (5 COLS ON DESKTOP) -->
-    <aside id="editor-pane" class="lg:col-span-5 space-y-4 no-print overflow-y-auto max-h-[calc(100vh-5.5rem)] pr-1">
+    <aside id="editor-pane" class="lg:col-span-5 space-y-4 no-print overflow-y-auto lg:max-h-[calc(100vh-8.5rem)] lg:pr-1">
       
       <!-- CONTROLS & THEME CUSTOMIZER -->
-      <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm space-y-4">
+      <div class="bg-white rounded-xl p-3.5 sm:p-4 border border-slate-200 shadow-sm space-y-3.5">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
             <i data-lucide="sliders" class="w-4 h-4 text-indigo-600"></i> Appearance & Layout
           </span>
-          <span class="text-[11px] text-slate-400">ATS Optimized</span>
+          <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">ATS Safe</span>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <!-- Template Selector -->
           <div>
             <label class="block font-medium text-slate-700 mb-1">Resume Template</label>
@@ -216,17 +233,17 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 text-xs items-center">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs items-center">
           <!-- Accent Color Palette -->
           <div>
             <label class="block font-medium text-slate-700 mb-1.5">Accent Color</label>
-            <div class="flex items-center space-x-1.5" id="color-palette">
-              <button onclick="updateConfig('accent', '#2563eb')" data-color="#2563eb" title="Royal Blue" class="palette-swatch w-5 h-5 rounded-full bg-blue-600 ring-2 ring-offset-2 ring-indigo-500"></button>
-              <button onclick="updateConfig('accent', '#0f766e')" data-color="#0f766e" title="Deep Teal" class="palette-swatch w-5 h-5 rounded-full bg-teal-700"></button>
-              <button onclick="updateConfig('accent', '#4f46e5')" data-color="#4f46e5" title="Indigo" class="palette-swatch w-5 h-5 rounded-full bg-indigo-600"></button>
-              <button onclick="updateConfig('accent', '#991b1b')" data-color="#991b1b" title="Burgundy" class="palette-swatch w-5 h-5 rounded-full bg-red-800"></button>
-              <button onclick="updateConfig('accent', '#1e293b')" data-color="#1e293b" title="Slate Noir" class="palette-swatch w-5 h-5 rounded-full bg-slate-800"></button>
-              <button onclick="updateConfig('accent', '#166534')" data-color="#166534" title="Forest" class="palette-swatch w-5 h-5 rounded-full bg-emerald-800"></button>
+            <div class="flex items-center space-x-2" id="color-palette">
+              <button onclick="updateConfig('accent', '#2563eb')" data-color="#2563eb" title="Royal Blue" class="palette-swatch w-6 h-6 rounded-full bg-blue-600 ring-2 ring-offset-2 ring-indigo-500"></button>
+              <button onclick="updateConfig('accent', '#0f766e')" data-color="#0f766e" title="Deep Teal" class="palette-swatch w-6 h-6 rounded-full bg-teal-700"></button>
+              <button onclick="updateConfig('accent', '#4f46e5')" data-color="#4f46e5" title="Indigo" class="palette-swatch w-6 h-6 rounded-full bg-indigo-600"></button>
+              <button onclick="updateConfig('accent', '#991b1b')" data-color="#991b1b" title="Burgundy" class="palette-swatch w-6 h-6 rounded-full bg-red-800"></button>
+              <button onclick="updateConfig('accent', '#1e293b')" data-color="#1e293b" title="Slate Noir" class="palette-swatch w-6 h-6 rounded-full bg-slate-800"></button>
+              <button onclick="updateConfig('accent', '#166534')" data-color="#166534" title="Forest" class="palette-swatch w-6 h-6 rounded-full bg-emerald-800"></button>
             </div>
           </div>
 
@@ -244,14 +261,14 @@
 
       <!-- SECTION 1: PERSONAL INFORMATION -->
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-personal')" class="w-full px-4 py-3 bg-slate-50/60 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
+        <button onclick="toggleSection('sec-personal')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
           <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
             <i data-lucide="user" class="w-4 h-4 text-indigo-600"></i> Personal Contact & Summary
           </span>
           <i data-lucide="chevron-down" id="sec-personal-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
         </button>
-        <div id="sec-personal" class="p-4 space-y-3 border-t border-slate-100">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div id="sec-personal" class="p-3.5 sm:p-4 space-y-3 border-t border-slate-100">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div>
               <label class="block text-[11px] font-medium text-slate-600 mb-1">Full Name</label>
               <input type="text" id="f-fullName" oninput="updateField('personal.fullName', this.value)" placeholder="e.g. Alex Morgan" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
@@ -262,7 +279,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <div>
               <label class="block text-[11px] font-medium text-slate-600 mb-1">Email</label>
               <input type="email" id="f-email" oninput="updateField('personal.email', this.value)" placeholder="alex@domain.com" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
@@ -277,7 +294,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <div>
               <label class="block text-[11px] font-medium text-slate-600 mb-1">Portfolio / Website</label>
               <input type="text" id="f-website" oninput="updateField('personal.website', this.value)" placeholder="alexmorgan.dev" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500">
@@ -301,17 +318,17 @@
 
       <!-- SECTION 2: WORK EXPERIENCE -->
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-experience')" class="w-full px-4 py-3 bg-slate-50/60 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
+        <button onclick="toggleSection('sec-experience')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
           <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
             <i data-lucide="briefcase" class="w-4 h-4 text-indigo-600"></i> Work Experience
           </span>
           <i data-lucide="chevron-down" id="sec-experience-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
         </button>
-        <div id="sec-experience" class="p-4 space-y-4 border-t border-slate-100">
-          <div id="experience-items-list" class="space-y-4">
-            <!-- Dynamically populated experience cards -->
+        <div id="sec-experience" class="p-3.5 sm:p-4 space-y-3.5 border-t border-slate-100">
+          <div id="experience-items-list" class="space-y-3.5">
+            <!-- Dynamically populated cards -->
           </div>
-          <button onclick="addExperience()" class="w-full py-2 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
+          <button onclick="addExperience()" class="w-full py-2.5 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             <span>Add Work Experience</span>
           </button>
@@ -320,17 +337,17 @@
 
       <!-- SECTION 3: EDUCATION -->
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-education')" class="w-full px-4 py-3 bg-slate-50/60 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
+        <button onclick="toggleSection('sec-education')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
           <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
             <i data-lucide="graduation-cap" class="w-4 h-4 text-indigo-600"></i> Education
           </span>
           <i data-lucide="chevron-down" id="sec-education-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
         </button>
-        <div id="sec-education" class="p-4 space-y-4 border-t border-slate-100">
+        <div id="sec-education" class="p-3.5 sm:p-4 space-y-3.5 border-t border-slate-100">
           <div id="education-items-list" class="space-y-3">
-            <!-- Dynamically populated education cards -->
+            <!-- Dynamically populated cards -->
           </div>
-          <button onclick="addEducation()" class="w-full py-2 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
+          <button onclick="addEducation()" class="w-full py-2.5 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             <span>Add Education</span>
           </button>
@@ -339,17 +356,17 @@
 
       <!-- SECTION 4: SKILLS & TOOLS -->
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-skills')" class="w-full px-4 py-3 bg-slate-50/60 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
+        <button onclick="toggleSection('sec-skills')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
           <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
             <i data-lucide="cpu" class="w-4 h-4 text-indigo-600"></i> Skills & Expertise
           </span>
           <i data-lucide="chevron-down" id="sec-skills-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
         </button>
-        <div id="sec-skills" class="p-4 space-y-3 border-t border-slate-100">
+        <div id="sec-skills" class="p-3.5 sm:p-4 space-y-3 border-t border-slate-100">
           <div id="skills-groups-list" class="space-y-3">
             <!-- Dynamic skills groups -->
           </div>
-          <button onclick="addSkillGroup()" class="w-full py-2 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
+          <button onclick="addSkillGroup()" class="w-full py-2.5 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             <span>Add Skill Category</span>
           </button>
@@ -358,17 +375,17 @@
 
       <!-- SECTION 5: PROJECTS -->
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-projects')" class="w-full px-4 py-3 bg-slate-50/60 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
+        <button onclick="toggleSection('sec-projects')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
           <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
             <i data-lucide="layers" class="w-4 h-4 text-indigo-600"></i> Projects
           </span>
           <i data-lucide="chevron-down" id="sec-projects-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
         </button>
-        <div id="sec-projects" class="p-4 space-y-3 border-t border-slate-100">
+        <div id="sec-projects" class="p-3.5 sm:p-4 space-y-3 border-t border-slate-100">
           <div id="projects-items-list" class="space-y-3">
             <!-- Dynamically populated projects -->
           </div>
-          <button onclick="addProject()" class="w-full py-2 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
+          <button onclick="addProject()" class="w-full py-2.5 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             <span>Add Project</span>
           </button>
@@ -377,17 +394,17 @@
 
       <!-- SECTION 6: CERTIFICATIONS & AWARDS -->
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <button onclick="toggleSection('sec-certs')" class="w-full px-4 py-3 bg-slate-50/60 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
+        <button onclick="toggleSection('sec-certs')" class="w-full px-3.5 sm:px-4 py-3 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between text-left transition-colors">
           <span class="text-xs font-bold text-slate-800 flex items-center gap-2">
             <i data-lucide="award" class="w-4 h-4 text-indigo-600"></i> Certifications & Awards
           </span>
           <i data-lucide="chevron-down" id="sec-certs-icon" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
         </button>
-        <div id="sec-certs" class="p-4 space-y-3 border-t border-slate-100">
+        <div id="sec-certs" class="p-3.5 sm:p-4 space-y-3 border-t border-slate-100">
           <div id="certs-items-list" class="space-y-2">
-            <!-- Dynamic certification entries -->
+            <!-- Dynamic entries -->
           </div>
-          <button onclick="addCertification()" class="w-full py-2 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
+          <button onclick="addCertification()" class="w-full py-2.5 border border-dashed border-slate-300 hover:border-indigo-500 hover:text-indigo-600 text-slate-600 text-xs font-medium rounded-lg flex items-center justify-center space-x-1.5 transition-all">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             <span>Add Certification</span>
           </button>
@@ -397,29 +414,45 @@
     </aside>
 
     <!-- RIGHT PANEL: LIVE PREVIEW & PRINT CANVAS (7 COLS ON DESKTOP) -->
-    <section id="preview-pane" class="lg:col-span-7 flex flex-col items-center justify-start overflow-x-auto pb-12">
+    <section id="preview-pane" class="hidden lg:flex lg:col-span-7 flex-col items-center justify-start pb-12 w-full">
       
-      <!-- Top Canvas Status Helper -->
-      <div class="w-full flex items-center justify-between text-xs text-slate-500 mb-3 px-1 no-print">
-        <span class="flex items-center gap-1.5">
-          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+      <!-- Top Canvas Helper & Mobile Zoom Toolbar -->
+      <div id="preview-controls" class="w-full flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 mb-3 px-1 no-print">
+        <span class="flex items-center gap-1.5 text-slate-600 font-medium text-xs">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
           <span>ATS Standard Safe Format</span>
         </span>
-        <span class="text-[11px] text-slate-400">Standard A4 / Letter format</span>
+
+        <!-- Scale / Zoom Buttons -->
+        <div class="flex items-center bg-white border border-slate-200 rounded-lg p-0.5 shadow-xs">
+          <button onclick="adjustScale(-0.1)" title="Zoom Out" class="p-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded">
+            <i data-lucide="zoom-out" class="w-3.5 h-3.5"></i>
+          </button>
+          <span id="zoom-level-text" class="px-2 text-[11px] font-mono font-medium text-slate-600">100%</span>
+          <button onclick="adjustScale(0.1)" title="Zoom In" class="p-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded">
+            <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>
+          </button>
+          <button onclick="resetAutoScale()" title="Fit Screen" class="px-2 py-0.5 text-[11px] font-medium text-indigo-600 hover:bg-indigo-50 rounded">
+            Fit
+          </button>
+        </div>
       </div>
 
-      <!-- RESUME PAPER CONTAINER (A4 BOUNDARIES) -->
-      <div id="resume-sheet" class="a4-sheet p-8 sm:p-11 rounded-sm text-slate-800 font-inter transition-all duration-200">
-        <!-- Rendered Resume HTML injects here -->
+      <!-- AUTO-SCALE VIEWPORT -->
+      <div id="sheet-viewport">
+        <!-- RESUME PAPER CONTAINER (A4 BOUNDARIES) -->
+        <div id="resume-sheet" class="a4-sheet p-8 sm:p-11 rounded-sm text-slate-800 font-inter transition-transform duration-75">
+          <!-- Rendered Resume HTML injects here -->
+        </div>
       </div>
     </section>
 
   </main>
 
   <!-- TOAST NOTIFICATION -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs flex items-center space-x-2 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none no-print">
-    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-    <span id="toast-message">Notification message</span>
+  <div id="toast" class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 bg-slate-900 text-white px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl shadow-2xl text-xs flex items-center space-x-2 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none no-print">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+    <span id="toast-message">Notification</span>
   </div>
 
   <!-- APPLICATION LOGIC -->
@@ -506,12 +539,14 @@
       ]
     };
 
-    // Deep copy helper for resetting
     const defaultData = JSON.parse(JSON.stringify(state));
+
+    // Dynamic Scale State for Viewport Fitting
+    let currentScale = 1.0;
+    let manualScaleActive = false;
 
     // INIT
     window.addEventListener('DOMContentLoaded', () => {
-      // Check local storage for existing session
       const saved = localStorage.getItem('craft_resume_state');
       if (saved) {
         try {
@@ -526,7 +561,60 @@
       renderAllFormLists();
       renderResume();
       lucide.createIcons();
+      updateAutoScaling();
     });
+
+    window.addEventListener('resize', () => {
+      if (!manualScaleActive) {
+        updateAutoScaling();
+      }
+    });
+
+    // Calculates and applies proportional scaling to the A4 sheet so it fits on any mobile screen
+    function updateAutoScaling() {
+      const previewPane = document.getElementById('preview-pane');
+      const viewport = document.getElementById('sheet-viewport');
+      const sheet = document.getElementById('resume-sheet');
+      
+      if (previewPane.classList.contains('hidden') && window.innerWidth < 1024) return;
+
+      const viewportWidth = viewport.clientWidth || (window.innerWidth - 32);
+      const sheetWidth = sheet.offsetWidth || 794;
+
+      if (viewportWidth < sheetWidth + 16) {
+        currentScale = Math.max(0.38, Math.min(1.0, (viewportWidth - 12) / sheetWidth));
+      } else {
+        currentScale = 1.0;
+      }
+
+      applyScale();
+    }
+
+    function applyScale() {
+      const sheet = document.getElementById('resume-sheet');
+      const viewport = document.getElementById('sheet-viewport');
+      const zoomText = document.getElementById('zoom-level-text');
+
+      sheet.style.transform = `scale(${currentScale})`;
+
+      const unscaledHeight = sheet.offsetHeight;
+      viewport.style.height = `${(unscaledHeight * currentScale) + 20}px`;
+
+      if (zoomText) {
+        zoomText.textContent = `${Math.round(currentScale * 100)}%`;
+      }
+    }
+
+    function adjustScale(delta) {
+      manualScaleActive = true;
+      currentScale = Math.max(0.35, Math.min(1.4, currentScale + delta));
+      applyScale();
+    }
+
+    function resetAutoScale() {
+      manualScaleActive = false;
+      updateAutoScaling();
+    }
 
     // Save State to LocalStorage
     function persistState() {
@@ -551,7 +639,6 @@
       document.getElementById('cfg-font').value = state.config.font;
       document.getElementById('cfg-density').value = state.config.density;
 
-      // Update palette swatches active ring
       document.querySelectorAll('.palette-swatch').forEach(sw => {
         if (sw.dataset.color === state.config.accent) {
           sw.classList.add('ring-2', 'ring-offset-2', 'ring-indigo-500');
@@ -561,7 +648,6 @@
       });
     }
 
-    // Update config properties
     function updateConfig(key, value) {
       state.config[key] = value;
       persistState();
@@ -577,7 +663,6 @@
       renderResume();
     }
 
-    // Update top-level or nested personal field
     function updateField(path, value) {
       const parts = path.split('.');
       if (parts.length === 2) {
@@ -589,7 +674,6 @@
       renderResume();
     }
 
-    // Toggle Accordion sections
     function toggleSection(id) {
       const el = document.getElementById(id);
       const icon = document.getElementById(id + '-icon');
@@ -602,7 +686,7 @@
       }
     }
 
-    // Mobile View Switcher
+    // Responsive Mobile View Switcher
     function switchMobileView(view) {
       const editorPane = document.getElementById('editor-pane');
       const previewPane = document.getElementById('preview-pane');
@@ -612,18 +696,24 @@
       if (view === 'editor') {
         editorPane.classList.remove('hidden');
         previewPane.classList.add('hidden');
-        tabEditor.className = "flex-1 py-1.5 rounded-md text-slate-900 bg-white shadow-sm font-semibold flex items-center justify-center space-x-1.5";
-        tabPreview.className = "flex-1 py-1.5 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-1.5";
+        previewPane.classList.remove('flex');
+
+        tabEditor.className = "flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-900 bg-white shadow-sm font-semibold flex items-center justify-center space-x-1.5 transition-all";
+        tabPreview.className = "flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-1.5 transition-all";
       } else {
         editorPane.classList.add('hidden');
         previewPane.classList.remove('hidden');
-        tabPreview.className = "flex-1 py-1.5 rounded-md text-slate-900 bg-white shadow-sm font-semibold flex items-center justify-center space-x-1.5";
-        tabEditor.className = "flex-1 py-1.5 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-1.5";
+        previewPane.classList.add('flex');
+
+        tabPreview.className = "flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-900 bg-white shadow-sm font-semibold flex items-center justify-center space-x-1.5 transition-all";
+        tabEditor.className = "flex-1 sm:flex-initial sm:px-5 py-2 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center space-x-1.5 transition-all";
+        
+        setTimeout(updateAutoScaling, 50);
       }
     }
 
     // -------------------------------------------------------------
-    // DYNAMIC CRUD LIST BUILDERS (Experience, Education, Skills, etc.)
+    // DYNAMIC CRUD LIST BUILDERS
     // -------------------------------------------------------------
 
     function renderAllFormLists() {
@@ -634,7 +724,7 @@
       renderCertificationsForm();
     }
 
-    // 1. Work Experience Form List
+    // 1. Work Experience
     function renderExperienceForm() {
       const list = document.getElementById('experience-items-list');
       list.innerHTML = '';
@@ -648,17 +738,17 @@
               <i data-lucide="trash" class="w-3.5 h-3.5"></i>
             </button>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.role)}" oninput="updateExp('${item.id}', 'role', this.value)" placeholder="Job Title" class="px-2 py-1 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.company)}" oninput="updateExp('${item.id}', 'company', this.value)" placeholder="Company" class="px-2 py-1 rounded border border-slate-200 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" value="${escapeHtml(item.role)}" oninput="updateExp('${item.id}', 'role', this.value)" placeholder="Job Title" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
+            <input type="text" value="${escapeHtml(item.company)}" oninput="updateExp('${item.id}', 'company', this.value)" placeholder="Company" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.location)}" oninput="updateExp('${item.id}', 'location', this.value)" placeholder="Location (City, ST / Remote)" class="px-2 py-1 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.period)}" oninput="updateExp('${item.id}', 'period', this.value)" placeholder="Dates (e.g. 2021 - Present)" class="px-2 py-1 rounded border border-slate-200 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" value="${escapeHtml(item.location)}" oninput="updateExp('${item.id}', 'location', this.value)" placeholder="Location (City, ST / Remote)" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
+            <input type="text" value="${escapeHtml(item.period)}" oninput="updateExp('${item.id}', 'period', this.value)" placeholder="Dates (e.g. 2021 - Present)" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
           </div>
           <div>
             <label class="block text-[10px] text-slate-500 mb-0.5">Key Achievements / Bullets (One per line):</label>
-            <textarea rows="3" oninput="updateExpBullets('${item.id}', this.value)" class="w-full px-2 py-1 rounded border border-slate-200 text-xs leading-relaxed" placeholder="• Led development of...&#10;• Reduced latency by...">${escapeHtml(item.bullets.join('\n'))}</textarea>
+            <textarea rows="3" oninput="updateExpBullets('${item.id}', this.value)" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs leading-relaxed" placeholder="• Led development of...&#10;• Reduced latency by...">${escapeHtml(item.bullets.join('\n'))}</textarea>
           </div>
         `;
         list.appendChild(div);
@@ -706,7 +796,7 @@
       renderResume();
     }
 
-    // 2. Education Form List
+    // 2. Education
     function renderEducationForm() {
       const list = document.getElementById('education-items-list');
       list.innerHTML = '';
@@ -720,15 +810,15 @@
               <i data-lucide="trash" class="w-3.5 h-3.5"></i>
             </button>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.degree)}" oninput="updateEdu('${item.id}', 'degree', this.value)" placeholder="Degree / Major" class="px-2 py-1 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.school)}" oninput="updateEdu('${item.id}', 'school', this.value)" placeholder="University / College" class="px-2 py-1 rounded border border-slate-200 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" value="${escapeHtml(item.degree)}" oninput="updateEdu('${item.id}', 'degree', this.value)" placeholder="Degree / Major" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
+            <input type="text" value="${escapeHtml(item.school)}" oninput="updateEdu('${item.id}', 'school', this.value)" placeholder="University / College" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.location)}" oninput="updateEdu('${item.id}', 'location', this.value)" placeholder="Location" class="px-2 py-1 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.year)}" oninput="updateEdu('${item.id}', 'year', this.value)" placeholder="Graduation Year / Range" class="px-2 py-1 rounded border border-slate-200 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" value="${escapeHtml(item.location)}" oninput="updateEdu('${item.id}', 'location', this.value)" placeholder="Location" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
+            <input type="text" value="${escapeHtml(item.year)}" oninput="updateEdu('${item.id}', 'year', this.value)" placeholder="Graduation Year / Range" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
           </div>
-          <input type="text" value="${escapeHtml(item.details || '')}" oninput="updateEdu('${item.id}', 'details', this.value)" placeholder="Honors, GPA, Relevant Coursework" class="w-full px-2 py-1 rounded border border-slate-200 text-xs">
+          <input type="text" value="${escapeHtml(item.details || '')}" oninput="updateEdu('${item.id}', 'details', this.value)" placeholder="Honors, GPA, Relevant Coursework" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs">
         `;
         list.appendChild(div);
       });
@@ -765,7 +855,7 @@
       renderResume();
     }
 
-    // 3. Skills Groups Form List
+    // 3. Skills Groups
     function renderSkillsForm() {
       const list = document.getElementById('skills-groups-list');
       list.innerHTML = '';
@@ -773,13 +863,13 @@
         const div = document.createElement('div');
         div.className = "p-2.5 bg-slate-50 rounded-lg border border-slate-200/80 space-y-1.5 text-xs";
         div.innerHTML = `
-          <div class="flex items-center justify-between">
-            <input type="text" value="${escapeHtml(item.category)}" oninput="updateSkillGroup('${item.id}', 'category', this.value)" placeholder="Category (e.g. Languages)" class="font-semibold px-2 py-1 rounded border border-slate-200 w-2/3">
+          <div class="flex items-center justify-between gap-2">
+            <input type="text" value="${escapeHtml(item.category)}" oninput="updateSkillGroup('${item.id}', 'category', this.value)" placeholder="Category (e.g. Languages)" class="font-semibold px-2 py-1.5 rounded border border-slate-200 flex-1">
             <button onclick="removeSkillGroup('${item.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete">
               <i data-lucide="trash" class="w-3.5 h-3.5"></i>
             </button>
           </div>
-          <input type="text" value="${escapeHtml(item.items)}" oninput="updateSkillGroup('${item.id}', 'items', this.value)" placeholder="Items separated by commas (e.g. Python, Docker, Go)" class="w-full px-2 py-1 rounded border border-slate-200">
+          <input type="text" value="${escapeHtml(item.items)}" oninput="updateSkillGroup('${item.id}', 'items', this.value)" placeholder="Items separated by commas (e.g. Python, Docker, Go)" class="w-full px-2 py-1.5 rounded border border-slate-200">
         `;
         list.appendChild(div);
       });
@@ -813,7 +903,7 @@
       renderResume();
     }
 
-    // 4. Projects Form List
+    // 4. Projects
     function renderProjectsForm() {
       const list = document.getElementById('projects-items-list');
       list.innerHTML = '';
@@ -827,12 +917,12 @@
               <i data-lucide="trash" class="w-3.5 h-3.5"></i>
             </button>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.title)}" oninput="updateProject('${item.id}', 'title', this.value)" placeholder="Project Title" class="px-2 py-1 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.tech)}" oninput="updateProject('${item.id}', 'tech', this.value)" placeholder="Tech Stack (e.g. React, Node)" class="px-2 py-1 rounded border border-slate-200 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" value="${escapeHtml(item.title)}" oninput="updateProject('${item.id}', 'title', this.value)" placeholder="Project Title" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
+            <input type="text" value="${escapeHtml(item.tech)}" oninput="updateProject('${item.id}', 'tech', this.value)" placeholder="Tech Stack (e.g. React, Node)" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
           </div>
-          <input type="text" value="${escapeHtml(item.link || '')}" oninput="updateProject('${item.id}', 'link', this.value)" placeholder="Project Link or Repo" class="w-full px-2 py-1 rounded border border-slate-200 text-xs">
-          <textarea rows="2" oninput="updateProject('${item.id}', 'description', this.value)" placeholder="Impact / Description of project..." class="w-full px-2 py-1 rounded border border-slate-200 text-xs leading-relaxed">${escapeHtml(item.description)}</textarea>
+          <input type="text" value="${escapeHtml(item.link || '')}" oninput="updateProject('${item.id}', 'link', this.value)" placeholder="Project Link or Repo" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs">
+          <textarea rows="2" oninput="updateProject('${item.id}', 'description', this.value)" placeholder="Impact / Description of project..." class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs leading-relaxed">${escapeHtml(item.description)}</textarea>
         `;
         list.appendChild(div);
       });
@@ -868,7 +958,7 @@
       renderResume();
     }
 
-    // 5. Certifications Form List
+    // 5. Certifications
     function renderCertificationsForm() {
       const list = document.getElementById('certs-items-list');
       list.innerHTML = '';
@@ -876,15 +966,15 @@
         const div = document.createElement('div');
         div.className = "p-2.5 bg-slate-50 rounded-lg border border-slate-200/80 space-y-1.5 text-xs";
         div.innerHTML = `
-          <div class="flex items-center justify-between">
-            <input type="text" value="${escapeHtml(item.name)}" oninput="updateCert('${item.id}', 'name', this.value)" placeholder="Certification Name" class="font-medium px-2 py-1 rounded border border-slate-200 w-2/3">
+          <div class="flex items-center justify-between gap-2">
+            <input type="text" value="${escapeHtml(item.name)}" oninput="updateCert('${item.id}', 'name', this.value)" placeholder="Certification Name" class="font-medium px-2 py-1.5 rounded border border-slate-200 flex-1">
             <button onclick="removeCert('${item.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete">
               <i data-lucide="trash" class="w-3.5 h-3.5"></i>
             </button>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(item.issuer)}" oninput="updateCert('${item.id}', 'issuer', this.value)" placeholder="Issuing Organization" class="px-2 py-1 rounded border border-slate-200 text-xs">
-            <input type="text" value="${escapeHtml(item.year)}" oninput="updateCert('${item.id}', 'year', this.value)" placeholder="Year / Valid Until" class="px-2 py-1 rounded border border-slate-200 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" value="${escapeHtml(item.issuer)}" oninput="updateCert('${item.id}', 'issuer', this.value)" placeholder="Issuing Organization" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
+            <input type="text" value="${escapeHtml(item.year)}" oninput="updateCert('${item.id}', 'year', this.value)" placeholder="Year / Valid Until" class="px-2 py-1.5 rounded border border-slate-200 text-xs">
           </div>
         `;
         list.appendChild(div);
@@ -928,10 +1018,8 @@
       const container = document.getElementById('resume-sheet');
       const { template, font, accent, density } = state.config;
       
-      // Update font family class on sheet
       container.className = `a4-sheet p-8 sm:p-11 rounded-sm text-slate-800 ${font} ${density} transition-all duration-150`;
 
-      // Density styles
       let gapMain = 'space-y-4';
       let gapItem = 'space-y-2';
       let textBase = 'text-[13px] leading-relaxed';
@@ -948,7 +1036,6 @@
         titleSize = 'text-3xl';
       }
 
-      // Render based on chosen template
       if (template === 'executive') {
         container.innerHTML = renderExecutiveTemplate(accent, gapMain, gapItem, textBase, titleSize);
       } else if (template === 'compact') {
@@ -958,9 +1045,15 @@
       } else {
         container.innerHTML = renderModernTemplate(accent, gapMain, gapItem, textBase, titleSize);
       }
+
+      if (!manualScaleActive) {
+        updateAutoScaling();
+      } else {
+        applyScale();
+      }
     }
 
-    // 1. TEMPLATE: MODERN MINIMAL (Clean, professional, top-tier tech/corporate ATS standard)
+    // 1. TEMPLATE: MODERN MINIMAL
     function renderModernTemplate(accent, gapMain, gapItem, textBase, titleSize) {
       const { personal, experience, education, skills, projects, certifications } = state;
 
@@ -1086,7 +1179,7 @@
       `;
     }
 
-    // 2. TEMPLATE: EXECUTIVE SERIF (Traditional centered header, formal, elegant dividers)
+    // 2. TEMPLATE: EXECUTIVE SERIF
     function renderExecutiveTemplate(accent, gapMain, gapItem, textBase, titleSize) {
       const { personal, experience, education, skills, projects, certifications } = state;
 
@@ -1194,7 +1287,7 @@
       `;
     }
 
-    // 3. TEMPLATE: TECH COMPACT (2 Columns, badges, maximum data density for single page)
+    // 3. TEMPLATE: TECH COMPACT
     function renderCompactTemplate(accent, gapMain, gapItem, textBase, titleSize) {
       const { personal, experience, education, skills, projects, certifications } = state;
 
@@ -1324,7 +1417,7 @@
       `;
     }
 
-    // 4. TEMPLATE: CREATIVE SIDEBAR (Prominent styled sidebar, clean modern layout)
+    // 4. TEMPLATE: CREATIVE SIDEBAR
     function renderCreativeTemplate(accent, gapMain, gapItem, textBase, titleSize) {
       const { personal, experience, education, skills, projects, certifications } = state;
 
@@ -1462,7 +1555,6 @@
     // BACKUP, RESTORE & DATA HELPERS
     // -------------------------------------------------------------
 
-    // Export JSON Backup
     function exportJSON() {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
       const downloadAnchor = document.createElement('a');
@@ -1475,7 +1567,6 @@
       showToast("Resume data exported to JSON!");
     }
 
-    // Import JSON File
     function importJSON(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1499,10 +1590,9 @@
         }
       };
       reader.readAsText(file);
-      event.target.value = ''; // Reset input
+      event.target.value = '';
     }
 
-    // Load Sample Data Preset
     function loadSampleData() {
       Object.assign(state, JSON.parse(JSON.stringify(defaultData)));
       persistState();
@@ -1512,7 +1602,6 @@
       showToast("Sample resume loaded!");
     }
 
-    // Clear All Fields
     function clearAllData() {
       state.personal = {
         fullName: 'Your Name',
@@ -1538,7 +1627,6 @@
       showToast("Editor cleared!");
     }
 
-    // Toast Notification helper
     function showToast(msg) {
       const toast = document.getElementById('toast');
       document.getElementById('toast-message').textContent = msg;
@@ -1550,7 +1638,6 @@
       }, 2600);
     }
 
-    // Escape HTML strings for safe rendering
     function escapeHtml(str) {
       if (!str) return '';
       return String(str)
